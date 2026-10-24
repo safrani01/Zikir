@@ -293,17 +293,17 @@ function Z(id,name,sub,arabic,targets,note,group){
 function defaultZikirs(){return [
   Z('d1','Rabbişrahli Sadri Duası','20 defa','رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي',[20],
     'Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Bu duayı 20 defa suya okuyup üzerine 7 Fâtiha daha okuyarak 20 gün konuşma sıkıntısı çeken, kekeleyen kişilere içirmek Allah c.c.’nün izniyle çok fayda sağlar.'),
-  Z('d2','Fâtiha Sûresi','7 defa (Rabbişrahli suyu için)','',[7]),
   Z('d3','Yâ Rahmân','Dünyada Merhamet Eden','يَا رَحْمَنُ',[298]),
   Z('d4','Yâ Rahîm','Ahirette Merhamet Eden','يَا رَحِيمُ',[258]),
-  Z('d5','Yâ Melik','Mülkün Gerçek Sahibi','يَا مَلِكُ',[90,121]),
+  Z('d5','Yâ Melik (90)','Mülkün Gerçek Sahibi','يَا مَلِكُ',[90]),
+  Z('d5b','Yâ Melik (121)','Mülkün Gerçek Sahibi','يَا مَلِكُ',[121]),
   Z('d6','Yâ Azîz','','يَا عَزِيزُ',[94]),
   Z('d7','Yâ Cebbâr','','يَا جَبَّارُ',[208]),
   Z('d8','Yâ Vehhâb','','يَا وَهَّابُ',[14]),
   Z('d9','Yâ Kuddûs','','يَا قُدُّوسُ',[174]),
   Z('d10','Yâ Selâm','','يَا سَلَامُ',[131]),
   Z('d11',"Yâ Vâsi'u (İş Bulmak İçin)",'İş bulmak için','يَا وَاسِعُ',[137],
-    "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur.",'weekly'),
+    "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur."),
   Z('d12','Borç ve Rızık Duası','11 defa','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11]),
   Z('d13','Sıkıntı ve Borçtan Kurtulma','3 defa','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ',[3]),
   Z('d14','Lâ ilâhe illallahül-Melikül-Hakkul-Mübin','Fakirlikten kurtulmak için','لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',[100]),
@@ -318,7 +318,7 @@ function defaultZikirs(){return [
   Z('d23','Yâ Vedûd','','يَا وَدُودُ',[400])
 ];}
 function defaultState(){return {
-  v:2,zl:3,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
+  v:2,zl:4,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
   totals:{reps:0,done:0},days:{},night:false,
   set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
        autoReset:true,autoAdvance:true,wake:false}
@@ -333,9 +333,9 @@ function load(){
       for(var k in d){if(!(k in j))j[k]=d[k];}
       for(var s in d.set){if(!(s in j.set))j.set[s]=d.set[s];}
       if(!Array.isArray(j.zikirs)||!j.zikirs.length)j.zikirs=d.zikirs;
-      if(oldZl!==3){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
+      if(oldZl!==4){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
         var mine=j.zikirs.filter(function(q){return String(q.id).charAt(0)==='u';});
-        j.zikirs=d.zikirs.concat(mine);j.zl=3;j.active='d1';
+        j.zikirs=d.zikirs.concat(mine);j.zl=4;j.active='d1';
         j.counts={};mine.forEach(function(q){if(j.counts)j.counts[q.id]=0;});j.period={};
       }
       return j;
@@ -1004,7 +1004,7 @@ function act(a,id,e,el){
       break;
     case 'defaults':
       if(confirmBox('Hazır zikir listesi geri yüklensin mi? Eklediğiniz zikirler ve sayaçlar silinir (istatistikler korunur).')){
-        S.zikirs=defaultZikirs();S.zl=3;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
+        S.zikirs=defaultZikirs();S.zl=4;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
       }
       break;
   }
