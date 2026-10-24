@@ -428,12 +428,10 @@ function addCount(z){
   var hit=z.targets.indexOf(n)>=0;
   if(hit){
     S.totals.done++;d.c++;
-    vib([110,50,160],true);
+    vib(n>=maxT(z)?[800]:[300,100,300],true);   // son zikir: tek uzun titreşim; ara hedef: iki orta
     playDone(z.sound.on?z.sound.type:'vibrate');
   }else{
-    var left=stageT(z)-n;
-    if(S.set.warn2&&z.warn2&&(left===2||left===1))vib([40,60,40],true);
-    else vib(22);
+    vib(22);
     playTap();
   }
   save();
@@ -558,7 +556,7 @@ function pageCount(){
    '<span class="pill" style="background:var(--s3)">● Zincir: <span id="sc-chain">'+doneN+' / '+S.zikirs.length+'</span></span></div>'+
    '<div class="ctl"><button class="row" data-a="auto" style="gap:10px;text-align:left"><span class="sw'+(S.set.autoAdvance?' on':'')+'" id="sw-auto"><i></i></span>'+
      '<span class="col"><span class="lab">Otomatik Geçiş</span><span class="lab-s acc" id="auto-st">'+(S.set.autoAdvance?'Açık (Kesintisiz)':'Kapalı (Manuel)')+'</span></span></button>'+
-   '<div class="row" style="gap:6px"><button class="btn ghost" data-a="hap" style="padding:8px 11px;font-size:11px;'+(S.set.haptic?'color:var(--accent-t)':'')+'">'+ic('vib')+' 2 Kala</button>'+
+   '<div class="row" style="gap:6px">'+
    '<button class="iconbtn" data-a="snd" style="background:var(--s3);'+(S.set.sound?'color:var(--accent-t)':'')+'" aria-label="Ses">'+ic(S.set.sound?'vol':'mute')+'</button></div></div>'+
    '<div class="card" style="padding:16px 14px;overflow:hidden">'+
      '<div class="row" style="align-items:flex-start"><div class="col"><span class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Zikir '+(idx+1)+' / '+S.zikirs.length+'</span>'+
@@ -692,8 +690,7 @@ function pageAdd(){
    '<div class="card flat fld"><div class="row"><div class="col"><span class="t-sm" style="font-size:16px">Tamamlama Sesi & Titreşim</span><span class="lab-s">Hedefe ulaşıldığında geri bildirim ver</span></div>'+
      '<button type="button" class="sw'+(snd.on?' on':'')+'" id="f-son" data-a="swSnd"><i></i></button></div>'+
      '<div class="snd">'+sopt('ney','tap','Ney Sesi')+sopt('drop','target','Su Damlası')+sopt('bell','star','Zarif Zil')+sopt('vibrate','vib','Titreşim')+'</div>'+
-     '<div class="row"><div class="col"><span style="font-size:14px">Bitime 2 kala uyar</span><span class="lab-s">Tamamlanmaya yaklaşırken hafif çift titreşim verir</span></div>'+
-     '<button type="button" class="sw'+((z?z.warn2:true)?' on':'')+'" id="f-w2" data-a="swW2"><i></i></button></div></div>'+
+     '</div>'+
    '<button type="button" class="btn block" data-a="saveZ" data-id="1">'+ic('play')+' '+(isEdit?'Kaydet ve Say':'Zikri Kaydet ve Başla')+'</button>'+
    (isEdit?'<button type="button" class="btn block danger" data-a="delZ">'+ic('trash')+' Bu Zikri Sil</button>':'')+
    '<p class="lab-s" style="text-align:center">'+ic('lock')+' Tüm verileriniz yalnızca cihazınızın yerel hafızasında güvenle saklanır.</p></form>';
@@ -708,7 +705,7 @@ function readForm(){
   targets.sort(function(a,b){return a-b;});
   var g=$('input[name=grp]:checked');var s=$('input[name=snd]:checked');
   return {name:name,arabic:$('#f-ar').value.trim(),sub:$('#f-sub').value.trim(),targets:targets,note:$('#f-note').value.trim().slice(0,250),
-    group:g?g.value:'daily',img:pendImg||'',sound:{on:$('#f-son').classList.contains('on'),type:s?s.value:'ney'},warn2:$('#f-w2').classList.contains('on')};
+    group:g?g.value:'daily',img:pendImg||'',sound:{on:$('#f-son').classList.contains('on'),type:s?s.value:'ney'},warn2:false};
 }
 function saveZ(start){
   var d=readForm();if(!d)return;
@@ -745,14 +742,14 @@ function keepFormTexts(){ // görsel değişince formu yeniden çizerken yazıla
   var v={};['f-name','f-ar','f-sub','f-t','f-t2','f-note'].forEach(function(id){var e=$('#'+id);if(e)v[id]=e.value;});
   var g=$('input[name=grp]:checked'),s=$('input[name=snd]:checked');
   v.grp=g?g.value:null;v.snd=s?s.value:null;
-  v.son=$('#f-son')?$('#f-son').classList.contains('on'):true;v.w2=$('#f-w2')?$('#f-w2').classList.contains('on'):true;
+  v.son=$('#f-son')?$('#f-son').classList.contains('on'):true;
   return v;
 }
 function restoreFormTexts(v){
   Object.keys(v).forEach(function(id){var e=$('#'+id);if(e&&id.indexOf('f-')===0)e.value=v[id];});
   if(v.grp){var a=$('input[name=grp][value='+v.grp+']');if(a)a.checked=true;}
   if(v.snd){var b=$('input[name=snd][value='+v.snd+']');if(b)b.checked=true;}
-  $('#f-son').classList.toggle('on',v.son);$('#f-w2').classList.toggle('on',v.w2);
+  $('#f-son').classList.toggle('on',v.son);
   $('#f-tl').textContent=($('#f-t').value||0)+' Tekrar';
   $('#f-nc').textContent=$('#f-note').value.length+'/250';
 }
@@ -861,9 +858,8 @@ function pageSettings(){
      '<div class="tile" style="flex-direction:row;justify-content:space-between;padding:10px 12px;opacity:.55"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s4)">EN</b><span class="lab">English</span></span><span class="lab-s">Yakında</span></div>'+
      '<div class="tile" style="flex-direction:row;justify-content:space-between;padding:10px 12px;opacity:.55"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s4)">DE</b><span class="lab">Deutsch</span></span><span class="lab-s">Yakında</span></div></div></div>'+
    '<div class="sec"><h3>'+ic('vib')+' Titreşim & Dokunsal Geri Bildirim</h3><div class="grp">'+
-     '<div class="row"><div class="col"><span class="lab">Her Sayımda Hafif Titreşim</span><span class="lab-s">Tesbih tanesi hissi veren mikro haptik</span></div>'+sw('haptic',s.haptic)+'</div><div class="sep"></div>'+
-     '<div class="row"><div class="col"><span class="lab">Zikir Bitimine 2 Kala Titreşim</span><span class="lab-s">Döngünün tamamlanacağını önceden haber verir</span></div>'+sw('warn2',s.warn2)+'</div>'+
-     '<div class="note">'+ic('info','acc')+'<span>Hedefe 2 ve 1 kala çift titreşim ile uyarır</span></div></div></div>'+
+     '<div class="row"><div class="col"><span class="lab">Her Sayımda Hafif Titreşim</span><span class="lab-s">Tesbih tanesi hissi veren mikro haptik</span></div>'+sw('haptic',s.haptic)+'</div>'+
+     '<div class="note">'+ic('info','acc')+'<span>Zikir hedefi bitince tek uzun titreşim gelir (bu ayardan bağımsız)</span></div></div></div>'+
    '<div class="sec"><h3>'+ic('vol')+' Ses ve Efektler</h3><div class="grp">'+
      '<div class="row"><div class="col"><span class="lab">Ses (genel)</span><span class="lab-s">Kapalıyken hiçbir ses çalmaz</span></div>'+sw('sound',s.sound)+'</div><div class="sep"></div>'+
      '<div class="row"><div class="col"><span class="lab">Tamamlama Sesi</span><span class="lab-s">Hedef sonunda tebrik sesi</span></div>'+sw('doneSound',s.doneSound)+'</div>'+
@@ -960,7 +956,6 @@ function act(a,id,e,el){
     case 'edit':editId=id;pendImg=null;go('add');break;
     case 'pick':S.active=id;save();renderAll();break;
     case 'auto':S.set.autoAdvance=!S.set.autoAdvance;save();renderAll();break;
-    case 'hap':S.set.warn2=!S.set.warn2;save();toast(S.set.warn2?'Bitime 2 kala titreşim açık':'Bitime 2 kala titreşim kapalı');if(S.set.warn2)vib([40,60,40],true);renderAll();break;
     case 'snd':S.set.sound=!S.set.sound;save();renderAll();break;
     case 'prev':case 'next':{
       var L=S.zikirs,i=L.indexOf(active());
@@ -978,7 +973,6 @@ function act(a,id,e,el){
     case 'stepT':{var inp=$('#f-t');var v=(parseInt(inp.value,10)||0)+(+id);if(v<1)v=1;inp.value=v;$('#f-tl').textContent=v+' Tekrar';break;}
     case 'chipT':$('#f-t').value=id;$('#f-tl').textContent=id+' Tekrar';break;
     case 'swSnd':$('#f-son').classList.toggle('on');break;
-    case 'swW2':$('#f-w2').classList.toggle('on');break;
     case 'prev-snd':if(id==='vibrate'){if(navigator.vibrate)navigator.vibrate(60);}else{playDone(id,true);if(navigator.vibrate)navigator.vibrate(40);}break;
     case 'cam':$('#fileCam').click();break;
     case 'gal':$('#fileImg').click();break;
