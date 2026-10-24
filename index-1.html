@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0c1516">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Zikir Matik">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Zikir Matik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#38bdf8; --on-accent:#00354a;
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --ar:"Amiri","Noto Naskh Arabic","Traditional Arabic","Geeza Pro","Droid Arabic Naskh",serif;
+}
+:root[data-theme=dark]{
+  --bg:#0c1516; --s0:#071011; --s1:#141d1e; --s2:#182122; --s3:#222c2d; --s4:#2d3637;
+  --on:#dbe4e5; --var:#bdc8d1; --out:#87929a; --line:rgba(255,255,255,.07);
+  --accent-t:color-mix(in srgb,var(--accent) 62%,white); --err:#ffb4ab; --shadow:0 4px 18px rgba(0,0,0,.35);
+}
+:root[data-theme=light]{
+  --bg:#f2f8fa; --s0:#ffffff; --s1:#e9f1f4; --s2:#e0ebef; --s3:#d6e4e9; --s4:#c8dae1;
+  --on:#0f1c20; --var:#3f545c; --out:#6b7c84; --line:rgba(0,0,0,.09);
+  --accent-t:color-mix(in srgb,var(--accent) 55%,black); --err:#b3261e; --shadow:0 4px 14px rgba(0,40,60,.12);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--on);font-family:var(--body);overflow:hidden;
+  touch-action:manipulation;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+.ic{width:1.25em;height:1.25em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:middle}
+.ic.fill{fill:currentColor}
+#app{position:fixed;inset:0;max-width:520px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg)}
+header{flex:none;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 8px) 14px 8px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);z-index:5}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;border-radius:50%;background:color-mix(in srgb,var(--accent) 16%,transparent);display:grid;place-items:center;color:var(--accent-t);
+  box-shadow:0 0 16px color-mix(in srgb,var(--accent) 25%,transparent)}
+.brand b{display:block;font:700 17px/1.15 var(--sans);color:var(--accent-t)}
+.brand small{display:block;font:500 10px/1.2 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--var)}
+.hbtn{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;color:var(--var)}
+.hbtn:active{background:var(--s3)}
+main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+main::-webkit-scrollbar{display:none}
+.page{padding:6px 14px 40px;display:flex;flex-direction:column;gap:14px;min-height:100%}
+nav{flex:none;display:grid;grid-template-columns:repeat(5,1fr);padding:4px 4px calc(env(safe-area-inset-bottom) + 4px);
+  background:color-mix(in srgb,var(--bg) 90%,transparent);border-top:1px solid var(--line);backdrop-filter:blur(14px);z-index:5}
+nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:54px;border-radius:14px;color:var(--var);font:500 10px/1 var(--sans)}
+nav a .ic{width:23px;height:23px}
+nav a.on{color:var(--accent-t);font-weight:700}
+nav a.on .ic{stroke-width:2.3}
+h1,h2,h3,p{margin:0}
+.t-lg{font:600 24px/1.25 var(--sans);letter-spacing:-.01em}
+.t-sm{font:600 17px/1.3 var(--sans)}
+.lab{font:600 12px/1.3 var(--sans);letter-spacing:.04em}
+.lab-s{font:500 10px/1.4 var(--sans);letter-spacing:.05em;color:var(--var)}
+.muted{color:var(--var)}
+.acc{color:var(--accent-t)}
+.card{background:var(--s3);border-radius:16px;padding:14px;box-shadow:var(--shadow);position:relative}
+.card.flat{background:var(--s2);box-shadow:none}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.col{display:flex;flex-direction:column}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font:600 12px/1.4 var(--sans);background:var(--s0);color:var(--accent-t)}
+.pill.ok{background:color-mix(in srgb,var(--accent) 80%,white 0%);color:var(--on-accent)}
+.arabic{font-family:var(--ar);direction:rtl;line-height:1.7}
+.bar{height:8px;border-radius:99px;background:var(--s0);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--accent);transition:width .3s}
+.bar.done i{background:color-mix(in srgb,var(--accent) 70%,white)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:99px;padding:9px 18px;font:700 13px/1 var(--sans);background:var(--accent);color:var(--on-accent);transition:transform .12s}
+.btn:active{transform:scale(.95)}
+.btn.soft{background:var(--s4);color:var(--accent-t)}
+.btn.ghost{background:var(--s2);color:var(--var);font-weight:600}
+.btn.block{width:100%;border-radius:14px;padding:15px;font-size:15px}
+.btn.danger{background:color-mix(in srgb,var(--err) 16%,transparent);color:var(--err)}
+.chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:7px 14px;border-radius:99px;background:var(--s3);color:var(--var);font:600 12px/1.2 var(--sans)}
+.chip.on{background:var(--accent);color:var(--on-accent)}
+/* home */
+.hero{background:linear-gradient(135deg,var(--s3),var(--s2) 55%,var(--s1));border-radius:16px;padding:14px;overflow:hidden;position:relative;box-shadow:var(--shadow)}
+.hero::before{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;border-radius:50%;background:color-mix(in srgb,var(--accent) 14%,transparent);filter:blur(32px)}
+.hero>*{position:relative}
+.stat2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.stat2>div{background:color-mix(in srgb,var(--s0) 72%,transparent);border-radius:10px;padding:10px 12px}
+.big{font:800 36px/1.1 var(--sans);letter-spacing:-.02em}
+.note{background:var(--s1);border-radius:10px;padding:8px 12px;font:500 11px/1.4 var(--sans);color:var(--var);display:flex;gap:8px;align-items:center}
+.zc{display:flex;flex-direction:column;gap:10px}
+.zc .h{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.zc .h .t{display:flex;gap:10px;min-width:0}
+.thumb{width:42px;height:42px;border-radius:10px;object-fit:cover;flex:none}
+.zc h2{font:600 17px/1.25 var(--sans)}
+.zc .sub{font:500 11px/1.4 var(--sans);color:var(--accent-t);margin-top:2px}
+.zc .arb{font-size:26px;color:var(--accent-t)}
+.zc .box{background:var(--s0);border-radius:10px;padding:10px 12px;font-size:20px;color:var(--accent-t);line-height:1.9}
+.zc .txt{font-size:13px;line-height:1.5;color:var(--var)}
+.iconbtn{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;color:var(--out)}
+.iconbtn:active{background:var(--s4)}
+.fab{position:fixed;right:max(16px,calc(50% - 244px));bottom:calc(env(safe-area-inset-bottom) + 74px);z-index:4;box-shadow:0 8px 24px rgba(0,0,0,.4);padding:13px 18px;font-size:14px}
+/* count page */
+.ctl{display:flex;align-items:center;justify-content:space-between;background:var(--s2);border-radius:14px;padding:10px 12px}
+.sw{width:40px;height:22px;border-radius:99px;background:var(--s4);padding:2px;transition:background .2s;flex:none}
+.sw i{display:block;width:18px;height:18px;border-radius:50%;background:var(--on-accent);opacity:.9;background:var(--var);transition:transform .2s}
+.sw.on{background:var(--accent)}
+.sw.on i{transform:translateX(18px);background:var(--on-accent)}
+.ringbox{position:relative;width:min(64vw,248px);aspect-ratio:1;margin:8px auto 4px}
+.ringbox .halo{position:absolute;inset:-8px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);animation:wave 2.4s ease-out infinite;pointer-events:none}
+@keyframes wave{0%{transform:scale(.94);opacity:.9}100%{transform:scale(1.1);opacity:0}}
+.disc{position:absolute;inset:0;border-radius:50%;background:linear-gradient(180deg,var(--s4),var(--s0));box-shadow:0 0 44px -10px color-mix(in srgb,var(--accent) 40%,transparent);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:transform .1s}
+.disc.press{transform:scale(.965)}
+.ringbox>svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.ringbox circle{fill:none;stroke-width:9}
+.ringbox .tr{stroke:var(--s4);opacity:.6}
+#ring{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .25s ease-out;filter:drop-shadow(0 0 5px var(--accent))}
+#sc-count{font:800 62px/1 var(--sans);letter-spacing:-.03em;transition:transform .09s}
+.chain{display:flex;flex-direction:column;gap:7px}
+.ci{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border-radius:14px;background:var(--s2);text-align:left;width:100%}
+.ci.cur{background:var(--s3);box-shadow:var(--shadow)}
+.ci.dn{opacity:.6}
+.num{width:24px;height:24px;border-radius:50%;background:var(--s4);display:grid;place-items:center;font:700 11px/1 var(--sans);color:var(--var);flex:none}
+.cur .num{background:var(--accent);color:var(--on-accent)}
+.dn .num{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent-t)}
+.goto{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 66px);max-width:520px;margin:0 auto;padding:0 14px;z-index:8;transform:translateY(160%);transition:transform .3s}
+.goto.show{transform:none}
+.goto .card{background:var(--s4);text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
+.tmbar{width:100%;height:5px;border-radius:99px;background:var(--s0);overflow:hidden}
+.tmbar i{display:block;height:100%;width:100%;background:var(--accent);transition:width 2s linear}
+.rip{position:fixed;width:130px;height:130px;margin:-65px 0 0 -65px;border-radius:50%;pointer-events:none;z-index:3;
+  background:radial-gradient(circle,color-mix(in srgb,var(--accent) 38%,transparent),transparent 70%);transform:scale(0);animation:rp .55s ease-out forwards}
+@keyframes rp{to{transform:scale(3.4);opacity:0}}
+/* form */
+.fld{display:flex;flex-direction:column;gap:7px}
+input[type=text],input[type=number],textarea{width:100%;font:400 15px/1.4 var(--body);color:var(--on);background:var(--s4);border:1px solid transparent;border-radius:12px;padding:12px 14px;outline:none}
+input:focus,textarea:focus{border-color:color-mix(in srgb,var(--accent) 60%,transparent)}
+input::placeholder,textarea::placeholder{color:var(--out)}
+textarea{resize:none}
+.stepper{position:relative}
+.stepper input{text-align:center;font:800 34px/1.2 var(--sans);color:var(--accent-t);padding:8px 56px}
+.stepper button{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:var(--s1);display:grid;place-items:center}
+.stepper .m{left:8px}.stepper .p{right:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:14px;background:var(--s2);cursor:pointer}
+.opt:has(input:checked){background:color-mix(in srgb,var(--accent) 16%,var(--s2));outline:1.5px solid color-mix(in srgb,var(--accent) 55%,transparent)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .ico{width:38px;height:38px;border-radius:50%;background:var(--s4);display:grid;place-items:center;color:var(--accent-t);flex:none}
+.opt:has(input:checked) .ico{background:var(--accent);color:var(--on-accent)}
+.snd{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.snd label{display:flex;align-items:center;justify-content:space-between;background:var(--s3);padding:10px;border-radius:12px;font:500 13px/1.2 var(--body);cursor:pointer}
+.snd label:has(input:checked){background:color-mix(in srgb,var(--accent) 22%,var(--s3))}
+.snd input{position:absolute;opacity:0;pointer-events:none}
+.seg{display:flex;background:var(--s1);border-radius:14px;padding:4px}
+.seg button{flex:1;padding:9px;border-radius:10px;font:600 13px/1 var(--sans);color:var(--var)}
+.seg button.on{background:var(--s3);color:var(--accent-t);box-shadow:var(--shadow)}
+.drop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:14px;background:var(--s1);text-align:center}
+.drop img{max-width:100%;max-height:150px;border-radius:12px}
+/* stats */
+.s3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.s3>div{background:var(--s3);border-radius:14px;padding:11px;display:flex;flex-direction:column;gap:6px}
+.s3 .ib{width:30px;height:30px;border-radius:9px;background:var(--s4);display:grid;place-items:center;color:var(--accent-t)}
+.s3 b{font:800 19px/1.1 var(--sans)}
+.chart{display:flex;align-items:flex-end;gap:5px;height:170px;padding-top:22px}
+.chart .c{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%;min-width:0}
+.chart .b{width:100%;max-width:30px;border-radius:7px 7px 3px 3px;background:var(--s4);min-height:3px;position:relative}
+.chart .b.mx{background:linear-gradient(180deg,var(--accent-t),var(--accent))}
+.chart .b:not(.mx){background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 55%,var(--s4)),color-mix(in srgb,var(--accent) 25%,var(--s4)))}
+.chart small{font:500 9.5px/1 var(--sans);color:var(--var);white-space:nowrap}
+.chart .v{font:700 10px/1 var(--sans);color:var(--accent-t);white-space:nowrap;position:absolute;top:-16px;left:50%;transform:translateX(-50%)}
+.badges{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.badges>div{background:var(--s2);border-radius:14px;padding:14px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.badges .bi{width:52px;height:52px;border-radius:50%;background:var(--s4);display:grid;place-items:center;color:var(--accent-t);margin-bottom:4px}
+.badges .lock{opacity:.55}
+.badges .lock .bi{color:var(--out)}
+/* settings */
+.sec{display:flex;flex-direction:column;gap:8px}
+.sec>h3{display:flex;align-items:center;gap:7px;font:700 16px/1.2 var(--sans);color:var(--accent-t);padding:0 4px}
+.grp{background:var(--s2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:14px}
+.sep{height:1px;background:var(--line)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px;border-radius:14px;background:var(--s3);position:relative;text-align:center}
+.tile.on{background:color-mix(in srgb,var(--accent) 24%,var(--s3));outline:1.5px solid var(--accent)}
+.swatch{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#06222f;border:2px solid transparent}
+.swatch.on{border-color:var(--on)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=color]{width:38px;height:38px;border:0;border-radius:50%;padding:0;background:none}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 84px);transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--s4);color:var(--on);
+  padding:10px 16px;border-radius:99px;font:600 12px/1.3 var(--sans);box-shadow:var(--shadow);transition:all .25s;z-index:20;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.empty{text-align:center;color:var(--var);padding:30px 10px;font-size:14px}
+.rtl{direction:rtl}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h4.5v-6h4v6h4.5V10"/></symbol>
+<symbol id="i-tap" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></symbol>
+<symbol id="i-plus2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-bars" viewBox="0 0 24 24"><path d="M5 20v-8M12 20V4M19 20v-5"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 13.2A8.5 8.5 0 1 1 10.8 3.5a6.8 6.8 0 0 0 9.7 9.7z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 5l-7 7 7 7"/></symbol>
+<symbol id="i-fwd" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></symbol>
+<symbol id="i-reset" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-checkc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M7.8 12.3l3 3 5.4-6"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19.5 8.5l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></symbol>
+<symbol id="i-vib" viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M4.5 8v8M19.5 8v8"/></symbol>
+<symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15 9a4.2 4.2 0 0 1 0 6M17.8 6.2a8.2 8.2 0 0 1 0 11.6"/></symbol>
+<symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M22 9.5l-5 5M17 9.5l5 5"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5.5 21V4M5.5 4.5h12l-2.2 3.7 2.2 3.8h-12"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c.8 3.6 5.2 5 5.2 10a5.2 5.2 0 0 1-10.4 0c0-2 .9-3.4 2.2-4.4.1 1.8 1 2.8 2 2.9C10.5 8.7 11 5.5 12 3z"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><path d="M3.5 8h3.6l1.7-2.5h6.4L16.9 8h3.6v11.5h-17z"/><circle cx="12" cy="13.5" r="3.6"/></symbol>
+<symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16.5l-5-5L6 20"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3.5v12M7 10.8l5 5 5-5M4 20h16"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M12 15.5v-12M7 8.2l5-5 5 5M4 20h16"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.2M12 7.8v.2"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9.5" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol>
+<symbol id="i-up2" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+<symbol id="i-dn2" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+<symbol id="i-pal" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 1.5-2.2-.5-1.2.2-2.3 1.5-2.3H17a4 4 0 0 0 4-4C21 6.8 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r=".8"/></symbol>
+<symbol id="i-repeat" viewBox="0 0 24 24"><path d="M4 11V9a3 3 0 0 1 3-3h12M16 3l3 3-3 3M20 13v2a3 3 0 0 1-3 3H5M8 21l-3-3 3-3"/></symbol>
+<symbol id="i-sun2" viewBox="0 0 24 24"><path d="M3 18h18M6 18a6 6 0 0 1 12 0M12 5v3M4.5 9.5l2 2M19.5 9.5l-2 2"/></symbol>
+</svg>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="logo"><svg class="ic" viewBox="0 0 24 24"><use href="#i-tap"/></svg></div>
+      <div><b>Zikir Matik</b><small id="hsub">Huzur &amp; Zikir</small></div>
+    </div>
+    <div class="row" style="gap:2px">
+      <button class="hbtn" data-a="theme" aria-label="Tema"><svg class="ic" id="themeIc" viewBox="0 0 24 24"><use href="#i-moon"/></svg></button>
+      <a class="hbtn" href="#settings" aria-label="Ayarlar"><svg class="ic" viewBox="0 0 24 24"><use href="#i-gear"/></svg></a>
+    </div>
+  </header>
+  <main id="view"></main>
+  <nav id="nav">
+    <a href="#home" data-r="home"><svg class="ic" viewBox="0 0 24 24"><use href="#i-home"/></svg>Ana Sayfa</a>
+    <a href="#count" data-r="count"><svg class="ic" viewBox="0 0 24 24"><use href="#i-tap"/></svg>Zikir Çek</a>
+    <a href="#add" data-r="add"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg>Zikir Ekle</a>
+    <a href="#stats" data-r="stats"><svg class="ic" viewBox="0 0 24 24"><use href="#i-bars"/></svg>İstatistik</a>
+    <a href="#settings" data-r="settings"><svg class="ic" viewBox="0 0 24 24"><use href="#i-gear"/></svg>Ayarlar</a>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+<div class="goto" id="goto"></div>
+<input type="file" id="fileImg" accept="image/*" hidden>
+<input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="fileImport" accept="application/json,.json" hidden>
+
+<script>
+(function(){
+'use strict';
+
+/* ============ yardımcılar ============ */
+var KEY='zikirmatik.v2';
+var $=function(s,r){return (r||document).querySelector(s);};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function ic(n,c){return '<svg class="ic '+(c||'')+'" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-'+n+'"/></svg>';}
+function fmt(n){return Number(n||0).toLocaleString('tr-TR');}
+function pad(n){return (n<10?'0':'')+n;}
+function dKey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function shifted(d){return new Date((d||new Date()).getTime()+10*60000);}   // 23:50 => yeni gün
+function dayKey(d){return dKey(shifted(d));}
+function weekKey(d){var s=shifted(d);while(s.getDay()!==6&&s.getDay()!==1){s.setDate(s.getDate()-1);}return dKey(s);}  // Cuma/Pazar 23:50
+function periodKey(g){return g==='daily'?dayKey():g==='weekly'?weekKey():'u';}
+
+/* ============ varsayılan zikirler ============ */
+function Z(id,name,sub,arabic,targets,note,group){
+  return {id:id,name:name,sub:sub||'',arabic:arabic||'',targets:targets,note:note||'',group:group||'daily',img:'',
+          sound:{on:true,type:'ney'},warn2:true};
+}
+function defaultZikirs(){return [
+  Z('d1','Rabbişrahli Sadri Duası','20 defa','رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي',[20],
+    'Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Bu duayı 20 defa suya okuyup üzerine 7 Fâtiha daha okuyarak 20 gün konuşma sıkıntısı çeken, kekeleyen kişilere içirmek Allah c.c.’nün izniyle çok fayda sağlar.'),
+  Z('d2','Fâtiha Sûresi','7 defa (Rabbişrahli suyu için)','',[7]),
+  Z('d3','Yâ Rahmân','Dünyada Merhamet Eden','يَا رَحْمَنُ',[298]),
+  Z('d4','Yâ Rahîm','Ahirette Merhamet Eden','يَا رَحِيمُ',[258]),
+  Z('d5','Yâ Melik','Mülkün Gerçek Sahibi','يَا مَلِكُ',[90,121]),
+  Z('d6','Yâ Azîz','','يَا عَزِيزُ',[94]),
+  Z('d7','Yâ Cebbâr','','يَا جَبَّارُ',[208]),
+  Z('d8','Yâ Vehhâb','','يَا وَهَّابُ',[14]),
+  Z('d9','Yâ Kuddûs','','يَا قُدُّوسُ',[174]),
+  Z('d10','Yâ Selâm','','يَا سَلَامُ',[131]),
+  Z('d11',"Yâ Vâsi'u (İş Bulmak İçin)",'İş bulmak için','يَا وَاسِعُ',[137],
+    "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur.",'weekly'),
+  Z('d12','Borç ve Rızık Duası','11 defa','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11]),
+  Z('d13','Sıkıntı ve Borçtan Kurtulma','3 defa','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ',[3]),
+  Z('d14','Lâ ilâhe illallahül-Melikül-Hakkul-Mübin','Fakirlikten kurtulmak için','لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',[100]),
+  Z('d15','Yâ Mütekebbir','','يَا مُتَكَبِّرُ',[262]),
+  Z('d16','Yâ Rezzâk','Rızık Kapılarını Açan','يَا رَزَّاقُ',[308]),
+  Z('d17','Sübhânallâhi ve bi hamdih','','سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',[100]),
+  Z('d18','Yâ Vedûd (Borçtan Kurtulma)','Borçtan kurtulma','يَا وَدُودُ',[270]),
+  Z('d19','Yâ Vehhâb (Borçtan Kurtulma)','Borçtan kurtulma','يَا وَهَّابُ',[196]),
+  Z('d20','Yâ Latîf','','يَا لَطِيفُ',[129]),
+  Z('d21','Yâ Mütekebbir','','يَا مُتَكَبِّرُ',[662]),
+  Z('d22','Yâ Musavvir','Şekil ve Suret Veren','يَا مُصَوِّرُ',[365],'Her gün okuyan, ruhaniler ile irtibata geçer.'),
+  Z('d23','Yâ Vedûd','','يَا وَدُودُ',[400])
+];}
+function defaultState(){return {
+  v:2,zl:3,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
+  totals:{reps:0,done:0},days:{},night:false,
+  set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
+       autoReset:true,autoAdvance:true,wake:false}
+};}
+var S=load();
+function load(){
+  var d=defaultState();
+  try{
+    var j=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(j&&typeof j==='object'){
+      var oldZl=j.zl;
+      for(var k in d){if(!(k in j))j[k]=d[k];}
+      for(var s in d.set){if(!(s in j.set))j.set[s]=d.set[s];}
+      if(!Array.isArray(j.zikirs)||!j.zikirs.length)j.zikirs=d.zikirs;
+      if(oldZl!==3){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
+        var mine=j.zikirs.filter(function(q){return String(q.id).charAt(0)==='u';});
+        j.zikirs=d.zikirs.concat(mine);j.zl=3;j.active='d1';
+        j.counts={};mine.forEach(function(q){if(j.counts)j.counts[q.id]=0;});j.period={};
+      }
+      return j;
+    }
+  }catch(e){}
+  return d;
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+/* ============ zikir yardımcıları ============ */
+function byId(id){for(var i=0;i<S.zikirs.length;i++){if(S.zikirs[i].id===id)return S.zikirs[i];}return null;}
+function cnt(z){return S.counts[z.id]||0;}
+function maxT(z){return z.targets[z.targets.length-1];}
+function stageIdx(z){var n=cnt(z);for(var i=0;i<z.targets.length;i++){if(n<z.targets[i])return i;}return z.targets.length-1;}
+function stageT(z){return z.targets[stageIdx(z)];}
+function isDone(z){return cnt(z)>=maxT(z);}
+function targetsText(z){return z.targets.join(' & ');}
+function active(){var z=byId(S.active);if(!z){z=S.zikirs[0];S.active=z.id;}return z;}
+function today(){return S.days[dayKey()]||{r:0,c:0,z:{}};}
+function dayRec(k){return S.days[k]||{r:0,c:0,z:{}};}
+function ensureDay(){var k=dayKey();if(!S.days[k])S.days[k]={r:0,c:0,z:{}};return S.days[k];}
+function groupName(g){return g==='daily'?'Günlük':g==='weekly'?'Haftalık':'Süresiz';}
+
+function checkResets(){
+  var ch=false;
+  S.zikirs.forEach(function(z){
+    var pk=periodKey(z.group);
+    if(S.period[z.id]===undefined){S.period[z.id]=pk;ch=true;return;}
+    if(S.period[z.id]!==pk){
+      if(S.set.autoReset){S.counts[z.id]=0;}
+      S.period[z.id]=pk;ch=true;
+    }
+  });
+  if(ch)save();
+  return ch;
+}
+
+/* ============ ses & titreşim ============ */
+var AC=null;
+function ac(){
+  try{
+    if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+  }catch(e){AC=null;}
+  return AC;
+}
+function tone(f1,f2,dur,type,vol,delay){
+  var c=ac();if(!c)return;
+  try{
+    var t=c.currentTime+(delay||0),o=c.createOscillator(),g=c.createGain();
+    o.type=type||'sine';
+    o.frequency.setValueAtTime(f1,t);
+    if(f2&&f2!==f1)o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+    var v=Math.max(.0002,(S.set.volume/100)*.3*(vol||1));
+    g.gain.setValueAtTime(v,t);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.03);
+  }catch(e){}
+}
+function playTap(){
+  if(!S.set.sound)return;
+  var t=S.set.tapType;
+  if(t==='ney')tone(540,500,.09,'sine',.9);
+  else if(t==='drop')tone(900,380,.1,'sine',.9);
+  else if(t==='tik')tone(1700,1300,.04,'triangle',1);
+}
+function playDone(type,force){
+  if(!force&&(!S.set.sound||!S.set.doneSound))return;
+  if(type==='ney'){tone(392,392,.55,'sine',1);tone(523,523,.7,'sine',1,.2);}
+  else if(type==='drop'){tone(900,350,.18,'sine',1);tone(900,350,.18,'sine',1,.2);tone(1100,420,.25,'sine',1,.4);}
+  else if(type==='bell'){tone(880,880,.9,'sine',1);tone(1320,1320,.7,'sine',.5);}
+}
+function vib(p,force){if((force||S.set.haptic)&&navigator.vibrate){try{navigator.vibrate(p);}catch(e){}}}
+
+var toastT=null;
+function toast(msg){
+  var t=$('#toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2300);
+}
+function confirmBox(msg){return window.confirm(msg);}
+
+/* ============ sayım ============ */
+function addCount(z){
+  var n=cnt(z);
+  if(n>=maxT(z)){vib(15);toast('Hedef tamamlandı');return false;}
+  n++;S.counts[z.id]=n;
+  S.totals.reps++;
+  var d=ensureDay();d.r++;d.z[z.id]=(d.z[z.id]||0)+1;
+  var h=new Date().getHours();if(h>=23)S.night=true;
+  var hit=z.targets.indexOf(n)>=0;
+  if(hit){
+    S.totals.done++;d.c++;
+    vib(n>=maxT(z)?[800]:[300,100,300],true);   // son zikir: tek uzun titreşim; ara hedef: iki orta
+    playDone(z.sound.on?z.sound.type:'vibrate');
+  }else{
+    var left=stageT(z)-n;
+    if(S.set.warn2&&z.warn2&&(left===2||left===1))vib([40,60,40],true);
+    else vib(22);
+    playTap();
+  }
+  save();
+  return hit?(n>=maxT(z)?'final':'stage'):true;
+}
+
+/* ============ yönlendirme ============ */
+var route='home',editId=null,statsRange='week',filter='all',chainEdit=false,pendImg=null,cdTimer=null;
+function go(r){
+  if(location.hash==='#'+r){renderAll();}else{location.hash='#'+r;}
+}
+function curRoute(){
+  var h=(location.hash||'#home').slice(1);
+  return ['home','count','add','stats','settings'].indexOf(h)>=0?h:'home';
+}
+window.addEventListener('hashchange',function(){hideGoto();renderAll();$('#view').scrollTop=0;});
+
+function applyTheme(){
+  var r=document.documentElement;
+  r.setAttribute('data-theme',S.set.theme);
+  r.style.setProperty('--accent',S.set.accent);
+  var c=S.set.accent.replace('#','');
+  var lum=0;
+  if(c.length===6){lum=(parseInt(c.substr(0,2),16)*299+parseInt(c.substr(2,2),16)*587+parseInt(c.substr(4,2),16)*114)/1000;}
+  r.style.setProperty('--on-accent',lum>150?'#062230':'#ffffff');
+  var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',S.set.theme==='dark'?'#0c1516':'#f2f8fa');
+  $('#themeIc').innerHTML='<use href="#i-'+(S.set.theme==='dark'?'moon':'sun')+'"/>';
+}
+
+var SUBS={home:'Ana Sayfa',count:'Zikir Çek',add:'Zikir Ekle',stats:'İstatistikler',settings:'Ayarlar'};
+function renderAll(){
+  route=curRoute();
+  applyTheme();
+  $('#hsub').textContent=SUBS[route];
+  $$('#nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-r')===route);});
+  var v=$('#view');
+  var html='';
+  if(route==='home')html=pageHome();
+  else if(route==='count')html=pageCount();
+  else if(route==='add')html=pageAdd();
+  else if(route==='stats')html=pageStats();
+  else html=pageSettings();
+  v.innerHTML=html;
+  if(route==='count')updateSession();
+}
+
+/* ============ ANA SAYFA ============ */
+function greet(){
+  var h=new Date().getHours();
+  return h<5?'Gece Huzuru':h<11?'Sabah Huzuru':h<15?'Öğle Huzuru':h<19?'İkindi Huzuru':h<22?'Akşam Huzuru':'Gece Huzuru';
+}
+function arabicBlock(z){
+  if(!z.arabic)return '';
+  return z.arabic.length>28?'<div class="box arabic">'+esc(z.arabic)+'</div>':'';
+}
+function zcard(z){
+  var n=cnt(z),t=stageT(z),mt=maxT(z),done=n>=mt;
+  var pct=done?100:Math.round(n/t*100);
+  var sub=z.sub;
+  if(z.targets.length>1)sub=(sub?sub+' ':'')+'(Hedef: '+z.targets.join(' / ')+')';
+  var badge=done?'<span class="pill ok">'+ic('checkc')+' '+n+' / '+mt+'</span>':'<span class="pill">'+n+' / '+t+'</span>';
+  var head='<div class="h"><div class="t">'+(z.img?'<img class="thumb" src="'+z.img+'" alt="">':'')+
+    '<div><h2>'+esc(z.name)+'</h2>'+(sub?'<div class="sub">'+esc(sub)+'</div>':'')+'</div></div>'+
+    '<div class="row" style="gap:4px">'+badge+'<button class="iconbtn" data-a="edit" data-id="'+z.id+'" aria-label="Düzenle">'+ic('pen')+'</button></div></div>';
+  var mid='';
+  if(z.arabic&&z.arabic.length<=28){
+    mid='<div class="row"><span class="arabic arb">'+esc(z.arabic)+'</span><span class="lab-s">'+(done?'Tamamlandı':'%'+pct+' Tamamlandı')+'</span></div>';
+  }else if(z.arabic){
+    mid=arabicBlock(z);
+  }
+  var note=z.note?'<p class="txt">'+esc(z.note)+'</p>':'';
+  var act=done?['verified','Tekrar Aç','soft','again']:n===0?['play','Başla (0)','','open']:['tap','Say ('+n+')','','open'];
+  var actIc=done?'checkc':n===0?'play':'tap';
+  return '<div class="card zc">'+head+mid+note+
+    '<div class="bar'+(done?' done':'')+'"><i style="width:'+pct+'%"></i></div>'+
+    '<div class="row"><button class="btn ghost" data-a="reset1" data-id="'+z.id+'" style="padding:8px 13px;font-size:12px">'+ic('reset')+' Sıfırla</button>'+
+    '<button class="btn '+act[2]+'" data-a="'+act[3]+'" data-id="'+z.id+'">'+ic(actIc)+' '+act[1]+'</button></div></div>';
+}
+function pageHome(){
+  var td=today();
+  var list=S.zikirs.filter(function(z){return filter==='all'||z.group===filter;});
+  var cards=list.length?list.map(zcard).join(''):'<div class="empty">Bu grupta zikir yok.<br>Aşağıdan yeni bir zikir ekleyebilirsiniz.</div>';
+  var cnts={all:S.zikirs.length};
+  ['daily','weekly','unlimited'].forEach(function(g){cnts[g]=S.zikirs.filter(function(z){return z.group===g;}).length;});
+  function chip(k,l){return '<button class="chip'+(filter===k?' on':'')+'" data-a="filter" data-id="'+k+'">'+l+'</button>';}
+  return '<div class="page">'+
+   '<div class="hero"><div class="row"><span class="row lab acc" style="gap:6px;text-transform:uppercase">'+ic('sun2')+' Vakit: '+greet()+'</span>'+
+   '<span class="pill" style="background:var(--s4);color:var(--var);font-size:10px">● Cihazda kayıtlı</span></div>'+
+   '<h1 class="t-lg" style="margin-top:10px">Selamün Aleyküm</h1><p class="muted" style="font-size:14px;margin-top:2px">Gönlünüze ferahlık, gününüze bereket dileriz.</p>'+
+   '<div class="stat2"><div><div class="lab-s">'+ic('tap')+' Bugünkü Zikir</div><div class="big acc">'+fmt(td.r)+' <span class="lab-s">adet</span></div></div>'+
+   '<div><div class="lab-s">'+ic('checkc')+' Toplam Tamamlanan</div><div class="big" style="color:var(--accent-t)">'+fmt(S.totals.done)+' <span class="lab-s">hedef</span></div></div></div></div>'+
+   '<div class="chips">'+chip('all','Tümü ('+cnts.all+')')+chip('daily','Günlük Zikirler')+chip('weekly','Haftalık Zikirler')+chip('unlimited','Süresiz Zikirler')+'</div>'+
+   '<div class="note">'+ic('clock','acc')+'<span>'+(S.set.autoReset?'Günlük zikirler saat <b style="color:var(--on)">23:50</b>’de otomatik sıfırlanır.':'Otomatik sıfırlama kapalı (Ayarlar’dan açabilirsiniz).')+'</span></div>'+
+   '<div class="col" style="gap:10px">'+cards+'</div>'+
+   '<button class="btn block soft" data-a="resetAll">'+ic('reset')+' Tüm Zikirleri Sıfırla</button>'+
+   '<p class="lab-s" style="text-align:center">Sayaçlar yalnızca bu cihazda saklanır.</p>'+
+   '<div style="height:56px"></div></div>'+
+   '<button class="btn fab" data-a="new">'+ic('plus2')+' Zikir Ekle</button>';
+}
+
+/* ============ ZİKİR ÇEK ============ */
+function nextIncomplete(fromId){
+  var L=S.zikirs,i=0;
+  for(i=0;i<L.length;i++){if(L[i].id===fromId)break;}
+  for(var k=1;k<=L.length;k++){var z=L[(i+k)%L.length];if(!isDone(z)&&z.id!==fromId)return z;}
+  return null;
+}
+function pageCount(){
+  var z=active(),idx=S.zikirs.indexOf(z),doneN=S.zikirs.filter(isDone).length;
+  var nxt=S.zikirs[(idx+1)%S.zikirs.length];
+  var circ=2*Math.PI*96;
+  var chain=S.zikirs.map(function(q,i){
+    var cur=q.id===z.id,dn=isDone(q);
+    return '<div class="row" style="gap:6px"><button class="ci'+(cur?' cur':'')+(dn&&!cur?' dn':'')+'" data-a="pick" data-id="'+q.id+'">'+
+     '<div class="row" style="gap:10px;min-width:0"><span class="num">'+(dn&&!cur?ic('check'):(i+1))+'</span>'+
+     '<div class="col" style="min-width:0"><span class="lab" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'+(cur?'color:var(--accent-t)':'')+'">'+esc(q.name)+(cur?' <span class="pill" style="padding:1px 7px;font-size:10px;background:color-mix(in srgb,var(--accent) 22%,transparent)">Şu Anki</span>':'')+'</span>'+
+     '<span class="lab-s">'+cnt(q)+' / '+maxT(q)+(dn?' Tamamlandı':cur?' Devam Ediyor':' • Sırada')+'</span></div></div></button>'+
+     (chainEdit?'<div class="row" style="gap:0"><button class="iconbtn" data-a="mvup" data-id="'+q.id+'">'+ic('up2')+'</button><button class="iconbtn" data-a="mvdn" data-id="'+q.id+'">'+ic('dn2')+'</button></div>':'')+'</div>';
+  }).join('');
+  return '<div class="page" id="cpage">'+
+   '<div class="row"><div class="row lab" style="gap:7px;font-size:17px;font-family:var(--sans);font-weight:600">'+ic('tap','acc')+' Zikir Çek</div>'+
+   '<span class="pill" style="background:var(--s3)">● Zincir: <span id="sc-chain">'+doneN+' / '+S.zikirs.length+'</span></span></div>'+
+   '<div class="ctl"><button class="row" data-a="auto" style="gap:10px;text-align:left"><span class="sw'+(S.set.autoAdvance?' on':'')+'" id="sw-auto"><i></i></span>'+
+     '<span class="col"><span class="lab">Otomatik Geçiş</span><span class="lab-s acc" id="auto-st">'+(S.set.autoAdvance?'Açık (Kesintisiz)':'Kapalı (Manuel)')+'</span></span></button>'+
+   '<div class="row" style="gap:6px"><button class="btn ghost" data-a="hap" style="padding:8px 11px;font-size:11px;'+(S.set.haptic?'color:var(--accent-t)':'')+'">'+ic('vib')+' 2 Kala</button>'+
+   '<button class="iconbtn" data-a="snd" style="background:var(--s3);'+(S.set.sound?'color:var(--accent-t)':'')+'" aria-label="Ses">'+ic(S.set.sound?'vol':'mute')+'</button></div></div>'+
+   '<div class="card" style="padding:16px 14px;overflow:hidden">'+
+     '<div class="row" style="align-items:flex-start"><div class="col"><span class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Zikir '+(idx+1)+' / '+S.zikirs.length+'</span>'+
+       '<h1 class="t-lg acc" style="margin-top:2px">'+esc(z.name)+'</h1></div>'+
+       '<span class="pill" style="background:color-mix(in srgb,var(--accent) 16%,transparent)">'+esc(targetsText(z))+' Hedef</span></div>'+
+     '<div style="text-align:center;margin:8px 0 0">'+
+       (z.img?'<img class="thumb" src="'+z.img+'" style="width:56px;height:56px;margin-bottom:4px" alt="">':'')+
+       (z.arabic?'<div class="arabic" style="font-size:'+(z.arabic.length>28?'24px':'40px')+';font-weight:700">'+esc(z.arabic)+'</div>':'')+
+       (z.sub?'<p class="muted" style="font-size:13px;margin-top:2px">'+esc(z.sub)+'</p>':'')+
+       (z.note?'<p class="muted" style="font-size:12px;margin-top:6px;line-height:1.5">'+esc(z.note)+'</p>':'')+'</div>'+
+     '<div class="ringbox"><div class="halo"></div>'+
+       '<div class="disc" id="disc"></div>'+
+       '<svg viewBox="0 0 220 220"><circle class="tr" cx="110" cy="110" r="96"/><circle id="ring" cx="110" cy="110" r="96" stroke-dasharray="'+circ.toFixed(2)+'" stroke-dashoffset="'+circ.toFixed(2)+'"/></svg>'+
+       '<div class="disc" style="background:none;box-shadow:none;pointer-events:none"><span class="pill" id="sc-stage" style="margin-bottom:2px"></span>'+
+       '<span id="sc-count">0</span>'+
+       '<span class="lab-s" style="margin-top:3px;font-size:12px">Kalan: <b class="acc" id="sc-rem">0</b> • <span id="sc-tg"></span></span></div></div>'+
+     '<p class="lab-s" style="text-align:center;margin-top:6px;display:flex;gap:6px;justify-content:center;align-items:center">'+ic('tap','acc')+' Ekranın herhangi bir yerine dokunarak sayabilirsiniz</p>'+
+     '<div class="card flat" style="margin-top:12px;padding:11px">'+
+       '<div class="row"><span class="lab">Sıradaki: <b class="acc">'+(nxt.id===z.id?'—':esc(nxt.name))+'</b></span><span class="pill" style="font-size:11px" id="sc-left"></span></div>'+
+       '<div class="bar" style="margin-top:8px;height:6px"><i id="sc-bar"></i></div>'+
+       '<div class="row" style="margin-top:8px"><span class="lab-s">Hedefe varınca '+(S.set.autoAdvance?'otomatik geçilir':'bekler (manuel)')+'</span>'+
+       '<button class="btn ghost" data-a="skip" style="padding:6px 11px;font-size:11px">Şimdi Atla '+ic('chev')+'</button></div></div>'+
+     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">'+
+       '<button class="btn ghost" data-a="prev" style="border-radius:12px;padding:12px">'+ic('back')+' Önceki</button>'+
+       '<button class="btn ghost" data-a="reset1" data-id="'+z.id+'" style="border-radius:12px;padding:12px">'+ic('reset')+' Sıfırla</button>'+
+       '<button class="btn" data-a="next" style="border-radius:12px;padding:12px">Sıradaki '+ic('fwd')+'</button></div></div>'+
+   '<div class="col" style="gap:8px"><div class="row"><span class="row t-sm" style="gap:7px">'+ic('repeat','acc')+' Günlük Zincir Akışı</span>'+
+     '<button class="lab acc" data-a="chainEdit">'+(chainEdit?'Bitti':'Sırayı Düzenle')+'</button></div>'+
+     '<div class="chain">'+chain+'</div></div>'+
+   '</div>';
+}
+function updateSession(){
+  if(route!=='count')return;
+  var z=active(),n=cnt(z),t=stageT(z),mt=maxT(z),circ=2*Math.PI*96;
+  var el=$('#sc-count');if(!el)return;
+  el.textContent=n;
+  var done=n>=mt;
+  $('#sc-rem').textContent=Math.max(0,t-n);
+  $('#sc-tg').textContent='Hedef: '+t;
+  var stg=$('#sc-stage');
+  stg.innerHTML=done?ic('checkc')+' Tamamlandı':(z.targets.length>1?ic('flag')+' Aşama '+(stageIdx(z)+1)+'/'+z.targets.length:ic('flag')+' Hedef: '+t);
+  var p=Math.min(1,n/t);
+  $('#ring').style.strokeDashoffset=(circ*(1-p)).toFixed(2);
+  var left=Math.max(0,mt-n);
+  $('#sc-left').textContent=done?'Tamamlandı':'Son '+left+' sayı';
+  $('#sc-bar').style.width=Math.min(100,n/mt*100)+'%';
+  $('#sc-chain').textContent=S.zikirs.filter(isDone).length+' / '+S.zikirs.length;
+}
+function ripple(x,y){
+  var r=document.createElement('span');r.className='rip';r.style.left=x+'px';r.style.top=y+'px';
+  document.body.appendChild(r);setTimeout(function(){r.remove();},600);
+}
+function onCountTap(e){
+  var z=active();
+  var res=addCount(z);
+  var c=$('#sc-count');
+  if(c){c.style.transform='scale(1.14)';setTimeout(function(){c.style.transform='';},90);}
+  var d=$('#disc');if(d){d.classList.add('press');setTimeout(function(){d.classList.remove('press');},110);}
+  if(e&&e.clientX!==undefined)ripple(e.clientX,e.clientY);
+  updateSession();
+  if(res==='final'){
+    var nx=nextIncomplete(z.id);
+    if(S.set.autoAdvance&&nx){showGoto(z,nx);}
+    else if(!nx){toast('Elhamdülillah, tüm zikirler tamamlandı');}
+  }
+}
+function showGoto(z,nx){
+  var g=$('#goto');
+  g.innerHTML='<div class="card"><div class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Elhamdülillah • Hedefe ulaşıldı</div>'+
+   '<div class="t-sm">'+esc(z.name)+' tamamlandı</div>'+
+   '<div class="lab-s">2 saniye içinde <b class="acc">'+esc(nx.name)+'</b> başlayacak</div>'+
+   '<div class="tmbar"><i id="tmfill"></i></div>'+
+   '<div class="row" style="width:100%;gap:8px"><button class="btn ghost" style="flex:1;border-radius:12px;padding:12px" data-a="gotoCancel">Beklet</button>'+
+   '<button class="btn" style="flex:1;border-radius:12px;padding:12px" data-a="gotoNow" data-id="'+nx.id+'">Şimdi Başla '+ic('fwd')+'</button></div></div>';
+  g.classList.add('show');
+  var f=$('#tmfill');f.style.width='100%';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){f.style.width='0%';});});
+  clearTimeout(cdTimer);
+  cdTimer=setTimeout(function(){switchTo(nx.id);},2050);
+}
+function hideGoto(){clearTimeout(cdTimer);var g=$('#goto');if(g)g.classList.remove('show');}
+function switchTo(id){
+  hideGoto();
+  S.active=id;save();
+  if(route==='count')renderAll();else go('count');
+  vib(35);
+}
+
+/* ============ ZİKİR EKLE / DÜZENLE ============ */
+function pageAdd(){
+  var z=editId?byId(editId):null;
+  if(editId&&!z){editId=null;}
+  var isEdit=!!z;
+  var tg=z?z.targets:[33];
+  var snd=z?z.sound:{on:true,type:'ney'};
+  var g=z?z.group:'daily';
+  if(z&&pendImg===null)pendImg=z.img||'';
+  var img=pendImg;
+  function opt(v,i,t,d){return '<label class="opt"><input type="radio" name="grp" value="'+v+'"'+(g===v?' checked':'')+'><span class="ico">'+ic(i)+'</span>'+
+    '<span class="col" style="flex:1"><span class="t-sm" style="font-size:16px">'+t+'</span><span class="muted" style="font-size:13px;line-height:1.4">'+d+'</span></span></label>';}
+  function sopt(v,i,t){return '<label><span class="row" style="gap:8px"><input type="radio" name="snd" value="'+v+'"'+(snd.type===v?' checked':'')+'>'+ic(i,'acc')+t+'</span>'+
+    '<button type="button" class="iconbtn" data-a="prev-snd" data-id="'+v+'" style="width:28px;height:28px">'+ic(v==='vibrate'?'vib':'play')+'</button></label>';}
+  function chips(){return [33,99,100,500,1000].map(function(n){return '<button type="button" class="chip" data-a="chipT" data-id="'+n+'">'+n+'</button>';}).join('');}
+  return '<form class="page" id="zform" onsubmit="return false">'+
+   '<div class="row"><div class="row" style="gap:10px"><a class="hbtn" href="#home" style="background:var(--s3)">'+ic('back')+'</a><h1 class="t-sm acc">'+(isEdit?'Zikri Düzenle':'Yeni Zikir Ekle')+'</h1></div>'+
+   '<button type="button" class="btn" data-a="saveZ" data-id="0" style="padding:8px 16px">'+ic('check')+' Kaydet</button></div>'+
+   '<div class="card flat fld"><div class="row"><label class="lab" style="color:var(--var)" for="f-name">ZİKİR BAŞLIĞI *</label><span class="lab-s">Zorunlu Alan</span></div>'+
+     '<input type="text" id="f-name" maxlength="80" placeholder="Örn: Yâ Fettâh veya Sübhânallâh" value="'+esc(z?z.name:'')+'">'+
+     '<label class="lab" style="color:var(--var);margin-top:6px" for="f-ar">ARAPÇA METİN <span class="lab-s">(isteğe bağlı)</span></label>'+
+     '<input type="text" id="f-ar" class="arabic" dir="rtl" style="font-size:22px" maxlength="400" placeholder="يَا فَتَّاحُ" value="'+esc(z?z.arabic:'')+'">'+
+     '<label class="lab" style="color:var(--var);margin-top:6px" for="f-sub">KISA AÇIKLAMA <span class="lab-s">(başlığın altında görünür)</span></label>'+
+     '<input type="text" id="f-sub" maxlength="80" placeholder="Örn: Rızık Kapılarını Açan" value="'+esc(z?z.sub:'')+'"></div>'+
+   '<div class="card flat fld"><div class="row"><label class="lab" style="color:var(--var)" for="f-t">HEDEF SAYI</label><span class="pill" id="f-tl" style="background:color-mix(in srgb,var(--accent) 14%,transparent)">'+tg[0]+' Tekrar</span></div>'+
+     '<div class="stepper"><input type="number" id="f-t" inputmode="numeric" min="1" max="99999" value="'+tg[0]+'">'+
+     '<button type="button" class="m" data-a="stepT" data-id="-1">'+ic('minus')+'</button><button type="button" class="p" data-a="stepT" data-id="1">'+ic('plus2')+'</button></div>'+
+     '<div class="chips">'+chips()+'</div>'+
+     '<label class="lab" style="color:var(--var);margin-top:6px" for="f-t2">İKİNCİ HEDEF <span class="lab-s">(isteğe bağlı — örn. 90 sonra 121)</span></label>'+
+     '<input type="number" id="f-t2" inputmode="numeric" min="1" max="99999" placeholder="Boş bırakılabilir" value="'+(tg[1]||'')+'"></div>'+
+   '<div class="card flat fld"><label class="lab" style="color:var(--var)" for="f-note">AÇIKLAMA / FAZİLETİ</label>'+
+     '<textarea id="f-note" rows="3" maxlength="250" placeholder="Örn: İş bulmak, ferahlık ve şifa niyetiyle okunur…">'+esc(z?z.note:'')+'</textarea>'+
+     '<div class="row lab-s"><span>Kalbi niyetinizi buraya not düşebilirsiniz</span><span id="f-nc">'+(z?z.note.length:0)+'/250</span></div></div>'+
+   '<div class="col" style="gap:8px"><div class="row"><span class="lab" style="color:var(--var)">ZİKİR GRUBU / TİPİ</span><span class="lab-s">Sıfırlama Döngüsü</span></div>'+
+     opt('daily','cal','Günlük','Her gün saat 23:50’de otomatik sıfırlanır ve yeni güne hazırlanır.')+
+     opt('weekly','cal','Haftalık','Her Cuma ve Pazar gecesi (23:50) sıfırlanarak haftalık vird düzenini korur.')+
+     opt('unlimited','repeat','Süresiz','Asla otomatik sıfırlanmaz, sayım kesintisiz sürer.')+'</div>'+
+   '<div class="card flat fld"><div class="row"><span class="lab" style="color:var(--var)">RESİM / SİMGE EKLE</span><span class="lab-s">İsteğe Bağlı</span></div>'+
+     '<div class="drop" id="f-drop">'+(img?'<img src="'+img+'" alt="">':'<span class="ib" style="width:52px;height:52px;border-radius:50%;background:var(--s4);display:grid;place-items:center;color:var(--accent-t)">'+ic('cam')+'</span><span class="muted" style="font-size:13px">Bu zikre özel bir görsel ekleyin.</span>')+
+     '<div class="row" style="gap:8px"><button type="button" class="btn soft" data-a="cam" style="padding:8px 14px">'+ic('cam')+' Kamera</button>'+
+     '<button type="button" class="btn soft" data-a="gal" style="padding:8px 14px">'+ic('img')+' Galeri</button>'+
+     (img?'<button type="button" class="btn danger" data-a="noimg" style="padding:8px 14px">'+ic('trash')+'</button>':'')+'</div></div></div>'+
+   '<div class="card flat fld"><div class="row"><div class="col"><span class="t-sm" style="font-size:16px">Tamamlama Sesi & Titreşim</span><span class="lab-s">Hedefe ulaşıldığında geri bildirim ver</span></div>'+
+     '<button type="button" class="sw'+(snd.on?' on':'')+'" id="f-son" data-a="swSnd"><i></i></button></div>'+
+     '<div class="snd">'+sopt('ney','tap','Ney Sesi')+sopt('drop','target','Su Damlası')+sopt('bell','star','Zarif Zil')+sopt('vibrate','vib','Titreşim')+'</div>'+
+     '<div class="row"><div class="col"><span style="font-size:14px">Bitime 2 kala uyar</span><span class="lab-s">Tamamlanmaya yaklaşırken hafif çift titreşim verir</span></div>'+
+     '<button type="button" class="sw'+((z?z.warn2:true)?' on':'')+'" id="f-w2" data-a="swW2"><i></i></button></div></div>'+
+   '<button type="button" class="btn block" data-a="saveZ" data-id="1">'+ic('play')+' '+(isEdit?'Kaydet ve Say':'Zikri Kaydet ve Başla')+'</button>'+
+   (isEdit?'<button type="button" class="btn block danger" data-a="delZ">'+ic('trash')+' Bu Zikri Sil</button>':'')+
+   '<p class="lab-s" style="text-align:center">'+ic('lock')+' Tüm verileriniz yalnızca cihazınızın yerel hafızasında güvenle saklanır.</p></form>';
+}
+function readForm(){
+  var name=$('#f-name').value.trim();
+  if(!name){$('#f-name').focus();toast('Lütfen önce bir zikir başlığı girin.');return null;}
+  var t1=parseInt($('#f-t').value,10),t2=parseInt($('#f-t2').value,10);
+  if(!(t1>0)){toast('Hedef sayı en az 1 olmalı.');return null;}
+  var targets=[t1];
+  if(t2>0&&t2!==t1)targets.push(t2);
+  targets.sort(function(a,b){return a-b;});
+  var g=$('input[name=grp]:checked');var s=$('input[name=snd]:checked');
+  return {name:name,arabic:$('#f-ar').value.trim(),sub:$('#f-sub').value.trim(),targets:targets,note:$('#f-note').value.trim().slice(0,250),
+    group:g?g.value:'daily',img:pendImg||'',sound:{on:$('#f-son').classList.contains('on'),type:s?s.value:'ney'},warn2:$('#f-w2').classList.contains('on')};
+}
+function saveZ(start){
+  var d=readForm();if(!d)return;
+  var z=editId?byId(editId):null;
+  if(z){
+    var oldGroup=z.group;
+    Object.keys(d).forEach(function(k){z[k]=d[k];});
+    if(oldGroup!==z.group){S.period[z.id]=periodKey(z.group);}
+  }else{
+    z={id:'u'+Date.now()};Object.keys(d).forEach(function(k){z[k]=d[k];});
+    S.zikirs.push(z);S.period[z.id]=periodKey(z.group);
+  }
+  S.active=z.id;save();
+  editId=null;pendImg=null;
+  toast(start?'Kaydedildi! Sayım başlatılıyor…':'Zikir listenize kaydedildi.');
+  go(start?'count':'home');
+}
+function resizeImg(file,cb){
+  var fr=new FileReader();
+  fr.onload=function(){
+    var im=new Image();
+    im.onload=function(){
+      var m=360,w=im.width,h=im.height,k=Math.min(1,m/Math.max(w,h));
+      var cv=document.createElement('canvas');cv.width=Math.round(w*k);cv.height=Math.round(h*k);
+      cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+      cb(cv.toDataURL('image/jpeg',.78));
+    };
+    im.onerror=function(){toast('Görsel okunamadı.');};
+    im.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+function keepFormTexts(){ // görsel değişince formu yeniden çizerken yazılanları koru
+  var v={};['f-name','f-ar','f-sub','f-t','f-t2','f-note'].forEach(function(id){var e=$('#'+id);if(e)v[id]=e.value;});
+  var g=$('input[name=grp]:checked'),s=$('input[name=snd]:checked');
+  v.grp=g?g.value:null;v.snd=s?s.value:null;
+  v.son=$('#f-son')?$('#f-son').classList.contains('on'):true;v.w2=$('#f-w2')?$('#f-w2').classList.contains('on'):true;
+  return v;
+}
+function restoreFormTexts(v){
+  Object.keys(v).forEach(function(id){var e=$('#'+id);if(e&&id.indexOf('f-')===0)e.value=v[id];});
+  if(v.grp){var a=$('input[name=grp][value='+v.grp+']');if(a)a.checked=true;}
+  if(v.snd){var b=$('input[name=snd][value='+v.snd+']');if(b)b.checked=true;}
+  $('#f-son').classList.toggle('on',v.son);$('#f-w2').classList.toggle('on',v.w2);
+  $('#f-tl').textContent=($('#f-t').value||0)+' Tekrar';
+  $('#f-nc').textContent=$('#f-note').value.length+'/250';
+}
+
+/* ============ İSTATİSTİK ============ */
+var TR_D=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+var TR_M=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+function shiftedDate(){return shifted(new Date());}
+function addDays(d,n){var x=new Date(d.getTime());x.setDate(x.getDate()+n);return x;}
+function rangeData(){
+  var base=shiftedDate(),keys=[],labels=[],prevKeys=[];
+  if(statsRange==='week'){
+    var dow=(base.getDay()+6)%7,mon=addDays(base,-dow);
+    for(var i=0;i<7;i++){keys.push([dKey(addDays(mon,i))]);labels.push(TR_D[i]);prevKeys.push(dKey(addDays(mon,i-7)));}
+  }else if(statsRange==='month'){
+    for(var j=29;j>=0;j--){var d=addDays(base,-j);keys.push([dKey(d)]);labels.push((d.getDate()%5===0||j===0)?String(d.getDate()):'');prevKeys.push(dKey(addDays(d,-30)));}
+  }else{
+    for(var m=11;m>=0;m--){
+      var dm=new Date(base.getFullYear(),base.getMonth()-m,1),pre=dm.getFullYear()+'-'+pad(dm.getMonth()+1);
+      keys.push({month:pre});labels.push(TR_M[dm.getMonth()]);
+      var pm=new Date(dm.getFullYear()-1,dm.getMonth(),1);prevKeys.push({month:pm.getFullYear()+'-'+pad(pm.getMonth()+1)});
+    }
+  }
+  return {keys:keys,labels:labels,prev:prevKeys};
+}
+function sumKey(k){
+  var r=0,c=0,z={};
+  function acc(rec){r+=rec.r;c+=rec.c;Object.keys(rec.z||{}).forEach(function(i){z[i]=(z[i]||0)+rec.z[i];});}
+  var kk=Array.isArray(k)?k[0]:k;
+  if(kk&&typeof kk==='object'&&kk.month){Object.keys(S.days).forEach(function(d){if(d.indexOf(kk.month)===0)acc(S.days[d]);});}
+  else{acc(dayRec(kk));}
+  return {r:r,c:c,z:z};
+}
+function streak(){
+  var d=shiftedDate(),n=0;
+  if(dayRec(dKey(d)).r===0)d=addDays(d,-1);
+  while(dayRec(dKey(d)).r>0){n++;d=addDays(d,-1);}
+  return n;
+}
+function pageStats(){
+  var R=rangeData(),vals=[],total=0,prevTotal=0,zsum={};
+  R.keys.forEach(function(k){var s=sumKey(k);vals.push(s.r);total+=s.r;Object.keys(s.z).forEach(function(i){zsum[i]=(zsum[i]||0)+s.z[i];});});
+  R.prev.forEach(function(k){prevTotal+=sumKey(k).r;});
+  var mx=Math.max.apply(null,vals.concat([1])),mi=vals.indexOf(Math.max.apply(null,vals));
+  var bars=vals.map(function(v,i){
+    var h=Math.max(2,Math.round(v/mx*100));
+    return '<div class="c"><div class="b'+(v>0&&i===mi?' mx':'')+'" style="height:'+(v?h:2)+'%">'+(v>0&&i===mi?'<span class="v">'+fmt(v)+'</span>':'')+'</div><small>'+(R.labels[i]||'&nbsp;')+'</small></div>';
+  }).join('');
+  var delta=prevTotal>0?Math.round((total-prevTotal)/prevTotal*100):null;
+  var title=statsRange==='week'?'Haftalık Genel Bakış':statsRange==='month'?'Son 30 Gün':'Yıllık Genel Bakış';
+  var per=statsRange==='week'?'Bu haftanın':statsRange==='month'?'Son 30 günün':'Son 12 ayın';
+  var ids=Object.keys(zsum).sort(function(a,b){return zsum[b]-zsum[a];}).slice(0,6);
+  var top=ids.length?zsum[ids[0]]:1;
+  var perf=ids.map(function(id){
+    var z=byId(id);var name=z?z.name:'(silinmiş zikir)';
+    var w=Math.round(zsum[id]/top*100);
+    return '<div class="card flat col" style="gap:7px;padding:12px"><div class="row"><div class="row" style="gap:8px;min-width:0"><i style="width:10px;height:10px;border-radius:50%;background:var(--accent);flex:none"></i>'+
+      '<span class="lab" style="font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(name)+'</span></div>'+
+      (z&&z.arabic&&z.arabic.length<=28?'<span class="arabic acc" style="font-size:18px;line-height:1.3">'+esc(z.arabic)+'</span>':'')+'</div>'+
+      '<div class="row lab-s" style="font-size:12px"><span>'+fmt(zsum[id])+' tekrar</span><span class="acc">'+(z?'Hedef: '+targetsText(z):'')+'</span></div>'+
+      '<div class="bar"><i style="width:'+w+'%"></i></div></div>';
+  }).join('')||'<div class="empty">Bu aralıkta henüz sayım yok. Zikir çekmeye başlayınca burada görünecek.</div>';
+  var st=streak();
+  function badge(ic1,t,d,ok,prog){return '<div class="'+(ok?'':'lock')+'"><span class="bi">'+ic(ic1)+'</span><b class="t-sm" style="font-size:15px">'+t+'</b><span class="lab-s">'+d+'</span>'+
+    '<span class="pill" style="font-size:11px;background:'+(ok?'color-mix(in srgb,var(--accent) 16%,transparent)':'var(--s4)')+';color:'+(ok?'var(--accent-t)':'var(--var)')+'">'+(ok?ic('check')+' Kazanıldı':ic('lock')+' '+prog)+'</span></div>';}
+  var b1=S.totals.reps>=100,b2=st>=7,b3=!!S.night,b4=S.totals.reps>=10000;
+  var nb=[b1,b2,b3,b4].filter(Boolean).length;
+  function sg(k,l){return '<button class="'+(statsRange===k?'on':'')+'" data-a="range" data-id="'+k+'">'+l+'</button>';}
+  return '<div class="page">'+
+   '<div class="row"><div class="col"><span class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">● Huzur Analitiği</span><h1 class="t-lg acc">İstatistikler</h1></div></div>'+
+   '<div class="hero" style="padding:16px"><span class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Manevi Ritim</span><p class="t-sm" style="margin-top:3px;max-width:260px">Kalpler ancak Allah’ı anmakla huzur bulur.</p></div>'+
+   '<div class="col" style="gap:7px"><div class="row"><span class="lab muted" style="font-size:13px">Bugünkü Özet</span><span class="lab-s acc">Canlı Veri</span></div>'+
+   '<div class="s3"><div><span class="ib">'+ic('checkc')+'</span><span class="lab-s">Tamamlanan</span><b class="acc">'+fmt(today().c)+' <small class="lab-s">Adet</small></b></div>'+
+   '<div><span class="ib">'+ic('repeat')+'</span><span class="lab-s">Toplam Tekrar</span><b>'+fmt(S.totals.reps)+'</b></div>'+
+   '<div><span class="ib">'+ic('flame')+'</span><span class="lab-s">Günlük Seri</span><b>'+st+' <small class="lab-s">Gün</small></b></div></div></div>'+
+   '<div class="seg">'+sg('week','Hafta')+sg('month','Ay')+sg('year','Yıl')+'</div>'+
+   '<div class="card"><div class="row" style="align-items:flex-start"><div class="col"><span class="t-sm">'+title+'</span><span class="lab-s">'+per+' toplam hacmi: '+fmt(total)+' tekrar</span></div>'+
+   (delta!==null?'<span class="pill" style="background:color-mix(in srgb,var(--accent) 18%,transparent)">'+ic('trend')+' '+(delta>=0?'+':'')+delta+'%</span>':'')+'</div>'+
+   '<div class="chart">'+bars+'</div></div>'+
+   '<div class="col" style="gap:8px"><div class="row"><span class="t-sm">Zikir Performansı & Dağılımı</span><span class="lab-s">'+ids.length+' Aktif Zikir</span></div>'+perf+'</div>'+
+   '<div class="col" style="gap:8px"><div class="row"><span class="row t-sm" style="gap:6px">'+ic('star','acc')+' Kazanılan Başarılar</span><span class="lab-s acc">'+nb+' / 4 Açıldı</span></div>'+
+   '<div class="badges">'+badge('star','İlk Adım','İlk 100 zikir',b1,fmt(Math.min(S.totals.reps,100))+' / 100')+
+   badge('cal','7 Gün Serisi','Kesintisiz 1 hafta',b2,Math.min(st,7)+' / 7 gün')+
+   badge('moon','Gece Kuşu','23:00 sonrası tefekkür',b3,'Gece zikri çek')+
+   badge('lock','10.000 Kulübü','10.000 sınırını aşma',b4,fmt(Math.min(S.totals.reps,10000))+' / 10.000')+'</div></div>'+
+   '<div class="note" style="padding:12px">'+ic('clock','acc')+'<span>Günlük veriler her gece 23:50’de arşivlenir; sayaçlar sıfırlanır, istatistikler korunur.</span></div></div>';
+}
+
+/* ============ AYARLAR ============ */
+var ACC=[['#38bdf8','Gök Mavisi'],['#2dd4bf','Turkuaz'],['#818cf8','Mor Mavi'],['#34d399','Zümrüt'],['#fbbf24','Kehribar']];
+function sw(id,on){return '<button class="sw'+(on?' on':'')+'" data-a="set" data-id="'+id+'"><i></i></button>';}
+function pageSettings(){
+  var s=S.set;
+  function tp(v,i,t){return '<button class="tile'+(s.tapType===v?' on':'')+'" data-a="tapType" data-id="'+v+'">'+ic(i,'acc')+'<span class="lab" style="font-size:11px">'+t+'</span></button>';}
+  var sw1=ACC.map(function(a){return '<button class="swatch'+(s.accent.toLowerCase()===a[0]?' on':'')+'" style="background:'+a[0]+'" data-a="accent" data-id="'+a[0]+'" aria-label="'+a[1]+'">'+(s.accent.toLowerCase()===a[0]?ic('check'):'')+'</button>';}).join('');
+  var cur=ACC.filter(function(a){return a[0]===s.accent.toLowerCase();})[0];
+  return '<div class="page">'+
+   '<div class="row"><div class="row" style="gap:10px"><a class="hbtn" href="#home" style="background:var(--s3)">'+ic('back')+'</a><div class="col"><h1 class="t-lg acc">Ayarlar</h1><span class="lab-s">Kişiselleştirme ve Tercihler</span></div></div></div>'+
+   '<div class="sec"><h3>'+ic('pal')+' Görünüm & Tema</h3><div class="grp"><div class="col" style="gap:8px"><span class="lab">Tema Modu</span><div class="two">'+
+     '<button class="tile'+(s.theme==='light'?' on':'')+'" data-a="themeSet" data-id="light">'+ic('sun','acc')+'<span class="lab">Gündüz</span><span class="lab-s">Gök mavisi açık</span></button>'+
+     '<button class="tile'+(s.theme==='dark'?' on':'')+'" data-a="themeSet" data-id="dark">'+ic('moon','acc')+'<span class="lab">Gece</span><span class="lab-s">Açık siyah</span></button></div></div>'+
+   '<div class="col" style="gap:8px"><div class="row"><span class="lab">Renk Vurgusu</span><span class="lab-s acc">'+(cur?cur[1]:'Özel')+' ('+s.accent+')</span></div>'+
+     '<div class="row" style="justify-content:flex-start;gap:10px;flex-wrap:wrap">'+sw1+'<input type="color" id="accPick" value="'+s.accent+'" aria-label="Özel renk"></div></div></div></div>'+
+   '<div class="sec"><h3>'+ic('globe')+' Dil Seçimi (Language)</h3><div class="grp" style="gap:8px">'+
+     '<div class="tile on" style="flex-direction:row;justify-content:space-between;padding:10px 12px"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s3)">TR</b><span class="col" style="text-align:left"><span class="lab">Türkçe</span><span class="lab-s acc">Varsayılan Sistem Dili</span></span></span>'+ic('checkc','acc')+'</div>'+
+     '<div class="tile" style="flex-direction:row;justify-content:space-between;padding:10px 12px;opacity:.55"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s4)">EN</b><span class="lab">English</span></span><span class="lab-s">Yakında</span></div>'+
+     '<div class="tile" style="flex-direction:row;justify-content:space-between;padding:10px 12px;opacity:.55"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s4)">DE</b><span class="lab">Deutsch</span></span><span class="lab-s">Yakında</span></div></div></div>'+
+   '<div class="sec"><h3>'+ic('vib')+' Titreşim & Dokunsal Geri Bildirim</h3><div class="grp">'+
+     '<div class="row"><div class="col"><span class="lab">Her Sayımda Hafif Titreşim</span><span class="lab-s">Tesbih tanesi hissi veren mikro haptik</span></div>'+sw('haptic',s.haptic)+'</div><div class="sep"></div>'+
+     '<div class="row"><div class="col"><span class="lab">Zikir Bitimine 2 Kala Titreşim</span><span class="lab-s">Döngünün tamamlanacağını önceden haber verir</span></div>'+sw('warn2',s.warn2)+'</div>'+
+     '<div class="note">'+ic('info','acc')+'<span>Hedefe 2 ve 1 kala kısa çift titreşim; hedef bitince tek uzun titreşim</span></div></div></div>'+
+   '<div class="sec"><h3>'+ic('vol')+' Ses ve Efektler</h3><div class="grp">'+
+     '<div class="row"><div class="col"><span class="lab">Ses (genel)</span><span class="lab-s">Kapalıyken hiçbir ses çalmaz</span></div>'+sw('sound',s.sound)+'</div><div class="sep"></div>'+
+     '<div class="row"><div class="col"><span class="lab">Tamamlama Sesi</span><span class="lab-s">Hedef sonunda tebrik sesi</span></div>'+sw('doneSound',s.doneSound)+'</div>'+
+     '<div class="col" style="gap:6px"><div class="row"><span class="lab">Ses Seviyesi</span><b class="lab acc" id="volv">%'+s.volume+'</b></div><input type="range" id="vol" min="0" max="100" value="'+s.volume+'"></div>'+
+     '<div class="col" style="gap:8px"><span class="lab">Sayım Sesi Türü</span><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'+tp('ney','tap','Ney Tonu')+tp('drop','target','Su Damlası')+tp('tik','check','Klasik Tık')+tp('off','mute','Sessiz')+'</div></div></div></div>'+
+   '<div class="sec"><h3>'+ic('reset')+' Sıfırlama ve Otomasyon</h3><div class="grp">'+
+     '<div class="row"><div class="col"><span class="lab">Otomatik Sıfırlama</span><span class="lab-s">Günlük zikirler her gece 23:50’de sıfırlanır (istatistik korunur)</span></div>'+sw('autoReset',s.autoReset)+'</div><div class="sep"></div>'+
+     '<div class="row"><div class="col"><span class="lab">Hedefe varınca sıradakine geç</span><span class="lab-s">Zikir Çek ekranındaki otomatik geçiş</span></div>'+sw('autoAdvance',s.autoAdvance)+'</div><div class="sep"></div>'+
+     '<div class="row"><div class="col"><span class="lab">Ekran açık kalsın</span><span class="lab-s">Zikir Çek ekranındayken ekran kararmasın</span></div>'+sw('wake',s.wake)+'</div><div class="sep"></div>'+
+     '<div class="col" style="gap:8px"><div class="col"><span class="lab">Verileri Yedekle & Geri Yükle</span><span class="lab-s">Zikir geçmişinizi JSON dosyası olarak saklayın</span></div>'+
+     '<div class="two"><button class="btn soft" data-a="export" style="border-radius:12px">'+ic('down')+' Dışa Aktar</button><button class="btn soft" data-a="import" style="border-radius:12px">'+ic('up')+' İçe Aktar</button></div></div>'+
+     '<button class="btn block danger" data-a="wipe" style="padding:13px;font-size:13px">'+ic('trash')+' Tüm İstatistikleri Sıfırla</button>'+
+     '<button class="btn block ghost" data-a="defaults" style="padding:13px;font-size:13px">'+ic('reset')+' Hazır Zikir Listesini Geri Yükle</button></div></div>'+
+   '<div class="sec"><h3>'+ic('info')+' Uygulama Hakkında</h3><div class="grp" style="align-items:center;text-align:center">'+
+     '<div class="logo" style="width:64px;height:64px"><svg class="ic" style="width:32px;height:32px" viewBox="0 0 24 24"><use href="#i-tap"/></svg></div>'+
+     '<div class="col"><b class="t-sm acc">Zikir Matik</b><span class="lab-s">Sürüm 2.0 (Huzur Sürümü)</span><span class="lab-s acc" style="margin-top:3px">Dijital Tesbihat Deneyimi</span></div>'+
+     '<p class="muted" style="font-style:italic;font-size:13px">“Kalpler ancak Allah’ı anmakla huzur bulur.” (Ra‘d, 28)</p></div></div>'+
+   '<a class="btn block" href="#home">'+ic('checkc')+' Sayaca Dön</a></div>';
+}
+
+/* ============ olaylar ============ */
+function wakeApply(){
+  try{
+    if(S.set.wake&&route==='count'&&'wakeLock' in navigator&&document.visibilityState==='visible'){
+      navigator.wakeLock.request('screen').then(function(l){window.__wl=l;}).catch(function(){});
+    }else if(window.__wl){window.__wl.release();window.__wl=null;}
+  }catch(e){}
+}
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'){if(checkResets())renderAll();wakeApply();}
+});
+setInterval(function(){if(checkResets()&&route!=='add')renderAll();},30000);
+
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-a]');
+  if(t){act(t.getAttribute('data-a'),t.getAttribute('data-id'),e,t);return;}
+  if(route==='count'&&!e.target.closest('button,a,input,label,textarea,.chain,#goto,nav,header')){onCountTap(e);}
+});
+document.addEventListener('input',function(e){
+  if(e.target.id==='vol'){S.set.volume=+e.target.value;$('#volv').textContent='%'+S.set.volume;save();}
+  else if(e.target.id==='accPick'){S.set.accent=e.target.value;save();applyTheme();}
+  else if(e.target.id==='f-t'){$('#f-tl').textContent=(e.target.value||0)+' Tekrar';}
+  else if(e.target.id==='f-note'){$('#f-nc').textContent=e.target.value.length+'/250';}
+});
+document.addEventListener('change',function(e){
+  if(e.target.id==='accPick'){renderAll();}
+  else if(e.target.id==='fileImg'||e.target.id==='fileCam'){
+    var f=e.target.files&&e.target.files[0];if(!f)return;
+    var keep=keepFormTexts();
+    resizeImg(f,function(url){pendImg=url;renderAll();restoreFormTexts(keep);});
+    e.target.value='';
+  }else if(e.target.id==='fileImport'){
+    var f2=e.target.files&&e.target.files[0];if(!f2)return;
+    var fr=new FileReader();
+    fr.onload=function(){
+      try{
+        var j=JSON.parse(fr.result);var st=j.state||j;
+        if(!st||!Array.isArray(st.zikirs)||!st.set)throw new Error('format');
+        if(!confirmBox('Mevcut veriler bu yedekle değiştirilecek. Devam edilsin mi?'))return;
+        S=st;
+        var d=defaultState();for(var k in d){if(!(k in S))S[k]=d[k];}
+        for(var q in d.set){if(!(q in S.set))S.set[q]=d.set[q];}
+        save();checkResets();renderAll();toast('Yedek geri yüklendi.');
+      }catch(err){toast('Bu dosya geçerli bir yedek değil.');}
+    };
+    fr.readAsText(f2);e.target.value='';
+  }
+});
+
+function act(a,id,e,el){
+  switch(a){
+    case 'theme':S.set.theme=S.set.theme==='dark'?'light':'dark';save();renderAll();break;
+    case 'themeSet':S.set.theme=id;save();renderAll();break;
+    case 'accent':S.set.accent=id;save();renderAll();break;
+    case 'tapType':S.set.tapType=id;save();renderAll();playTap();break;
+    case 'set':
+      S.set[id]=!S.set[id];save();renderAll();
+      if(id==='wake')wakeApply();
+      if(id==='haptic'&&S.set.haptic)vib(40);
+      break;
+    case 'filter':filter=id;renderAll();break;
+    case 'open':S.active=id;save();go('count');break;
+    case 'again':
+      if(confirmBox('Bu zikrin sayacı sıfırlanıp yeniden açılsın mı?')){S.counts[id]=0;S.active=id;save();go('count');}
+      break;
+    case 'reset1':{
+      var z=byId(id);if(!z||cnt(z)===0)break;
+      if(confirmBox('“'+z.name+'” sayacı sıfırlansın mı?')){S.counts[id]=0;save();hideGoto();renderAll();vib([30,30]);}
+      break;}
+    case 'resetAll':
+      if(confirmBox('Tüm zikir sayaçları sıfırlansın mı? (İstatistikler korunur)')){S.zikirs.forEach(function(q){S.counts[q.id]=0;});save();renderAll();toast('Tüm sayaçlar sıfırlandı');}
+      break;
+    case 'new':editId=null;pendImg=null;go('add');break;
+    case 'edit':editId=id;pendImg=null;go('add');break;
+    case 'pick':S.active=id;save();renderAll();break;
+    case 'auto':S.set.autoAdvance=!S.set.autoAdvance;save();renderAll();break;
+    case 'hap':S.set.warn2=!S.set.warn2;save();toast(S.set.warn2?'Bitime 2 kala titreşim açık':'Bitime 2 kala titreşim kapalı');if(S.set.warn2)vib([40,60,40],true);renderAll();break;
+    case 'snd':S.set.sound=!S.set.sound;save();renderAll();break;
+    case 'prev':case 'next':{
+      var L=S.zikirs,i=L.indexOf(active());
+      S.active=L[(i+(a==='next'?1:-1)+L.length)%L.length].id;save();hideGoto();renderAll();break;}
+    case 'skip':{var nx=nextIncomplete(S.active);if(nx)switchTo(nx.id);else toast('Tüm zikirler tamamlandı');break;}
+    case 'gotoCancel':hideGoto();toast('Geçiş bekletildi');break;
+    case 'gotoNow':switchTo(id);break;
+    case 'chainEdit':chainEdit=!chainEdit;renderAll();break;
+    case 'mvup':case 'mvdn':{
+      var A=S.zikirs,k=-1;for(var m=0;m<A.length;m++){if(A[m].id===id)k=m;}
+      var j=a==='mvup'?k-1:k+1;
+      if(k>=0&&j>=0&&j<A.length){var tmp=A[k];A[k]=A[j];A[j]=tmp;save();renderAll();}
+      break;}
+    case 'range':statsRange=id;renderAll();break;
+    case 'stepT':{var inp=$('#f-t');var v=(parseInt(inp.value,10)||0)+(+id);if(v<1)v=1;inp.value=v;$('#f-tl').textContent=v+' Tekrar';break;}
+    case 'chipT':$('#f-t').value=id;$('#f-tl').textContent=id+' Tekrar';break;
+    case 'swSnd':$('#f-son').classList.toggle('on');break;
+    case 'swW2':$('#f-w2').classList.toggle('on');break;
+    case 'prev-snd':if(id==='vibrate'){if(navigator.vibrate)navigator.vibrate(60);}else{playDone(id,true);if(navigator.vibrate)navigator.vibrate(40);}break;
+    case 'cam':$('#fileCam').click();break;
+    case 'gal':$('#fileImg').click();break;
+    case 'noimg':{var kp=keepFormTexts();pendImg='';renderAll();restoreFormTexts(kp);break;}
+    case 'saveZ':saveZ(id==='1');break;
+    case 'delZ':{
+      var dz=byId(editId);if(!dz)break;
+      if(S.zikirs.length<2){toast('En az bir zikir kalmalı.');break;}
+      if(confirmBox('“'+dz.name+'” silinsin mi? Geçmiş istatistikler korunur.')){
+        S.zikirs=S.zikirs.filter(function(q){return q.id!==dz.id;});
+        delete S.counts[dz.id];delete S.period[dz.id];
+        if(S.active===dz.id)S.active=S.zikirs[0].id;
+        editId=null;pendImg=null;save();toast('Zikir silindi');go('home');
+      }
+      break;}
+    case 'export':{
+      try{
+        var blob=new Blob([JSON.stringify({app:'zikirmatik',version:2,exported:new Date().toISOString(),state:S},null,1)],{type:'application/json'});
+        var u=URL.createObjectURL(blob),an=document.createElement('a');
+        an.href=u;an.download='zikirmatik-yedek-'+dKey(new Date())+'.json';document.body.appendChild(an);an.click();an.remove();
+        setTimeout(function(){URL.revokeObjectURL(u);},4000);toast('Yedek dosyası hazırlandı');
+      }catch(err){toast('Yedek alınamadı.');}
+      break;}
+    case 'import':$('#fileImport').click();break;
+    case 'wipe':
+      if(confirmBox('Tüm istatistikler (günlük kayıtlar, toplamlar, rozetler) silinsin mi? Bu işlem geri alınamaz.')){
+        S.days={};S.totals={reps:0,done:0};S.night=false;S.zikirs.forEach(function(q){S.counts[q.id]=0;});save();renderAll();toast('İstatistikler sıfırlandı');
+      }
+      break;
+    case 'defaults':
+      if(confirmBox('Hazır zikir listesi geri yüklensin mi? Eklediğiniz zikirler ve sayaçlar silinir (istatistikler korunur).')){
+        S.zikirs=defaultZikirs();S.zl=3;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
+      }
+      break;
+  }
+}
+
+/* ============ başlat ============ */
+checkResets();
+if(!location.hash)location.hash='#home';
+renderAll();
+wakeApply();
+window.addEventListener('hashchange',wakeApply);
+
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
+}
+})();
+</script>
+</body>
+</html>
