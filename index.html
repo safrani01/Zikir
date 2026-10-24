@@ -408,7 +408,7 @@ function playDone(type,force){
   else if(type==='drop'){tone(900,350,.18,'sine',1);tone(900,350,.18,'sine',1,.2);tone(1100,420,.25,'sine',1,.4);}
   else if(type==='bell'){tone(880,880,.9,'sine',1);tone(1320,1320,.7,'sine',.5);}
 }
-function vib(p){if(S.set.haptic&&navigator.vibrate){try{navigator.vibrate(p);}catch(e){}}}
+function vib(p,force){if((force||S.set.haptic)&&navigator.vibrate){try{navigator.vibrate(p);}catch(e){}}}
 
 var toastT=null;
 function toast(msg){
@@ -428,11 +428,11 @@ function addCount(z){
   var hit=z.targets.indexOf(n)>=0;
   if(hit){
     S.totals.done++;d.c++;
-    vib([110,50,160]);
+    vib([110,50,160],true);
     playDone(z.sound.on?z.sound.type:'vibrate');
   }else{
     var left=stageT(z)-n;
-    if(S.set.warn2&&z.warn2&&(left===2||left===1))vib([40,60,40]);
+    if(S.set.warn2&&z.warn2&&(left===2||left===1))vib([40,60,40],true);
     else vib(22);
     playTap();
   }
@@ -960,7 +960,7 @@ function act(a,id,e,el){
     case 'edit':editId=id;pendImg=null;go('add');break;
     case 'pick':S.active=id;save();renderAll();break;
     case 'auto':S.set.autoAdvance=!S.set.autoAdvance;save();renderAll();break;
-    case 'hap':S.set.warn2=!S.set.warn2;save();toast(S.set.warn2?'Bitime 2 kala titreşim açık':'Bitime 2 kala titreşim kapalı');if(S.set.warn2)vib([40,60,40]);renderAll();break;
+    case 'hap':S.set.warn2=!S.set.warn2;save();toast(S.set.warn2?'Bitime 2 kala titreşim açık':'Bitime 2 kala titreşim kapalı');if(S.set.warn2)vib([40,60,40],true);renderAll();break;
     case 'snd':S.set.sound=!S.set.sound;save();renderAll();break;
     case 'prev':case 'next':{
       var L=S.zikirs,i=L.indexOf(active());

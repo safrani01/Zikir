@@ -1,4 +1,4 @@
-var CACHE = 'zikirmatik-v2';
+var CACHE = 'zikirmatik-v3';
 var FONTS = 'zikirmatik-fonts-v1';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
