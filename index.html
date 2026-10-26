@@ -111,7 +111,7 @@ h1,h2,h3,p{margin:0}
 .sw i{display:block;width:18px;height:18px;border-radius:50%;background:var(--on-accent);opacity:.9;background:var(--var);transition:transform .2s}
 .sw.on{background:var(--accent)}
 .sw.on i{transform:translateX(18px);background:var(--on-accent)}
-.ringbox{position:relative;width:min(64vw,248px);aspect-ratio:1;margin:8px auto 4px}
+.ringbox{position:relative;width:min(70vw,272px);aspect-ratio:1;margin:8px auto 4px}
 .ringbox .halo{position:absolute;inset:-8px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);animation:wave 2.4s ease-out infinite;pointer-events:none}
 @keyframes wave{0%{transform:scale(.94);opacity:.9}100%{transform:scale(1.1);opacity:0}}
 .disc{position:absolute;inset:0;border-radius:50%;background:linear-gradient(180deg,var(--s4),var(--s0));box-shadow:0 0 44px -10px color-mix(in srgb,var(--accent) 40%,transparent);
@@ -121,7 +121,7 @@ h1,h2,h3,p{margin:0}
 .ringbox circle{fill:none;stroke-width:9}
 .ringbox .tr{stroke:var(--s4);opacity:.6}
 #ring{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .25s ease-out;filter:drop-shadow(0 0 5px var(--accent))}
-#sc-count{font:800 62px/1 var(--sans);letter-spacing:-.03em;transition:transform .09s}
+#sc-count{font:800 68px/1 var(--sans);letter-spacing:-.03em;transition:transform .09s}
 .chain{display:flex;flex-direction:column;gap:7px}
 .ci{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border-radius:14px;background:var(--s2);text-align:left;width:100%}
 .ci.cur{background:var(--s3);box-shadow:var(--shadow)}
@@ -133,7 +133,7 @@ h1,h2,h3,p{margin:0}
 .goto.show{transform:none}
 .goto .card{background:var(--s4);text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
 .tmbar{width:100%;height:5px;border-radius:99px;background:var(--s0);overflow:hidden}
-.tmbar i{display:block;height:100%;width:100%;background:var(--accent);transition:width 2s linear}
+.tmbar i{display:block;height:100%;width:100%;background:var(--accent);transition:width .8s linear}
 .rip{position:fixed;width:130px;height:130px;margin:-65px 0 0 -65px;border-radius:50%;pointer-events:none;z-index:3;
   background:radial-gradient(circle,color-mix(in srgb,var(--accent) 38%,transparent),transparent 70%);transform:scale(0);animation:rp .55s ease-out forwards}
 @keyframes rp{to{transform:scale(3.4);opacity:0}}
@@ -291,7 +291,7 @@ function Z(id,name,sub,arabic,targets,note,group){
           sound:{on:true,type:'ney'},warn2:true};
 }
 function defaultZikirs(){return [
-  Z('d1','Rabbişrahli Sadri Duası','20 defa','رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي',[20],
+  Z('d1','Rabbişrahli Sadri Duası','','رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي',[20],
     'Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Bu duayı 20 defa suya okuyup üzerine 7 Fâtiha daha okuyarak 20 gün konuşma sıkıntısı çeken, kekeleyen kişilere içirmek Allah c.c.’nün izniyle çok fayda sağlar.'),
   Z('d3','Yâ Rahmân','Dünyada Merhamet Eden','يَا رَحْمَنُ',[298]),
   Z('d4','Yâ Rahîm','Ahirette Merhamet Eden','يَا رَحِيمُ',[258]),
@@ -302,23 +302,23 @@ function defaultZikirs(){return [
   Z('d8','Yâ Vehhâb','','يَا وَهَّابُ',[14]),
   Z('d9','Yâ Kuddûs','','يَا قُدُّوسُ',[174]),
   Z('d10','Yâ Selâm','','يَا سَلَامُ',[131]),
-  Z('d11',"Yâ Vâsi'u (İş Bulmak İçin)",'İş bulmak için','يَا وَاسِعُ',[137],
+  Z('d11',"Yâ Vâsi'u",'','يَا وَاسِعُ',[137],
     "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur."),
-  Z('d12','Borç ve Rızık Duası','11 defa','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11]),
-  Z('d13','Sıkıntı ve Borçtan Kurtulma','3 defa','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ',[3]),
-  Z('d14','Lâ ilâhe illallahül-Melikül-Hakkul-Mübin','Fakirlikten kurtulmak için','لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',[100]),
+  Z('d12','Borç ve Rızık Duası','','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11]),
+  Z('d13','Sıkıntı ve Borçtan Kurtulma','','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ',[3]),
+  Z('d14','Lâ ilâhe illallahül-Melikül-Hakkul-Mübin','','لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',[100]),
   Z('d15','Yâ Mütekebbir','','يَا مُتَكَبِّرُ',[262]),
   Z('d16','Yâ Rezzâk','Rızık Kapılarını Açan','يَا رَزَّاقُ',[308]),
   Z('d17','Sübhânallâhi ve bi hamdih','','سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',[100]),
-  Z('d18','Yâ Vedûd (Borçtan Kurtulma)','Borçtan kurtulma','يَا وَدُودُ',[270]),
-  Z('d19','Yâ Vehhâb (Borçtan Kurtulma)','Borçtan kurtulma','يَا وَهَّابُ',[196]),
+  Z('d18','Yâ Vedûd','','يَا وَدُودُ',[270]),
+  Z('d19','Yâ Vehhâb','','يَا وَهَّابُ',[196]),
   Z('d20','Yâ Latîf','','يَا لَطِيفُ',[129]),
   Z('d21','Yâ Mütekebbir','','يَا مُتَكَبِّرُ',[662]),
   Z('d22','Yâ Musavvir','Şekil ve Suret Veren','يَا مُصَوِّرُ',[365],'Her gün okuyan, ruhaniler ile irtibata geçer.'),
   Z('d23','Yâ Vedûd','','يَا وَدُودُ',[400])
 ];}
 function defaultState(){return {
-  v:2,zl:4,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
+  v:2,zl:5,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
   totals:{reps:0,done:0},days:{},night:false,
   set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
        autoReset:true,autoAdvance:true,wake:false}
@@ -333,9 +333,13 @@ function load(){
       for(var k in d){if(!(k in j))j[k]=d[k];}
       for(var s in d.set){if(!(s in j.set))j.set[s]=d.set[s];}
       if(!Array.isArray(j.zikirs)||!j.zikirs.length)j.zikirs=d.zikirs;
-      if(oldZl!==4){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
+      if(oldZl===4){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
+        var dm={};d.zikirs.forEach(function(q){dm[q.id]=q;});
+        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;}});
+        j.zl=5;
+      }else if(oldZl!==5){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
         var mine=j.zikirs.filter(function(q){return String(q.id).charAt(0)==='u';});
-        j.zikirs=d.zikirs.concat(mine);j.zl=4;j.active='d1';
+        j.zikirs=d.zikirs.concat(mine);j.zl=5;j.active='d1';
         j.counts={};mine.forEach(function(q){if(j.counts)j.counts[q.id]=0;});j.period={};
       }
       return j;
@@ -505,7 +509,7 @@ function zcard(z){
   var note=z.note?'<p class="txt">'+esc(z.note)+'</p>':'';
   var act=done?['verified','Tekrar Aç','soft','again']:n===0?['play','Başla (0)','','open']:['tap','Say ('+n+')','','open'];
   var actIc=done?'checkc':n===0?'play':'tap';
-  return '<div class="card zc">'+head+mid+note+
+  return '<div class="card zc" data-sid="'+z.id+'">'+head+mid+note+
     '<div class="bar'+(done?' done':'')+'"><i style="width:'+pct+'%"></i></div>'+
     '<div class="row"><button class="btn ghost" data-a="reset1" data-id="'+z.id+'" style="padding:8px 13px;font-size:12px">'+ic('reset')+' Sıfırla</button>'+
     '<button class="btn '+act[2]+'" data-a="'+act[3]+'" data-id="'+z.id+'">'+ic(actIc)+' '+act[1]+'</button></div></div>';
@@ -525,7 +529,8 @@ function pageHome(){
    '<div><div class="lab-s">'+ic('checkc')+' Toplam Tamamlanan</div><div class="big" style="color:var(--accent-t)">'+fmt(S.totals.done)+' <span class="lab-s">hedef</span></div></div></div></div>'+
    '<div class="chips">'+chip('all','Tümü ('+cnts.all+')')+chip('daily','Günlük Zikirler')+chip('weekly','Haftalık Zikirler')+chip('unlimited','Süresiz Zikirler')+'</div>'+
    '<div class="note">'+ic('clock','acc')+'<span>'+(S.set.autoReset?'Günlük zikirler saat <b style="color:var(--on)">23:50</b>’de otomatik sıfırlanır.':'Otomatik sıfırlama kapalı (Ayarlar’dan açabilirsiniz).')+'</span></div>'+
-   '<div class="col" style="gap:10px">'+cards+'</div>'+
+   '<div class="note">'+ic('tap','acc')+'<span>Sıralamak için bir zikre basılı tutup sürükleyin.</span></div>'+
+   '<div class="col" id="homelist" data-sort="home" style="gap:10px">'+cards+'</div>'+
    '<button class="btn block soft" data-a="resetAll">'+ic('reset')+' Tüm Zikirleri Sıfırla</button>'+
    '<p class="lab-s" style="text-align:center">Sayaçlar yalnızca bu cihazda saklanır.</p>'+
    '<div style="height:56px"></div></div>'+
@@ -545,7 +550,7 @@ function pageCount(){
   var circ=2*Math.PI*96;
   var chain=S.zikirs.map(function(q,i){
     var cur=q.id===z.id,dn=isDone(q);
-    return '<div class="row" style="gap:6px"><button class="ci'+(cur?' cur':'')+(dn&&!cur?' dn':'')+'" data-a="pick" data-id="'+q.id+'">'+
+    return '<div class="row" data-sid="'+q.id+'" style="gap:6px"><button class="ci'+(cur?' cur':'')+(dn&&!cur?' dn':'')+'" data-a="pick" data-id="'+q.id+'">'+
      '<div class="row" style="gap:10px;min-width:0"><span class="num">'+(dn&&!cur?ic('check'):(i+1))+'</span>'+
      '<div class="col" style="min-width:0"><span class="lab" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'+(cur?'color:var(--accent-t)':'')+'">'+esc(q.name)+(cur?' <span class="pill" style="padding:1px 7px;font-size:10px;background:color-mix(in srgb,var(--accent) 22%,transparent)">Şu Anki</span>':'')+'</span>'+
      '<span class="lab-s">'+cnt(q)+' / '+maxT(q)+(dn?' Tamamlandı':cur?' Devam Ediyor':' • Sırada')+'</span></div></div></button>'+
@@ -562,11 +567,6 @@ function pageCount(){
      '<div class="row" style="align-items:flex-start"><div class="col"><span class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Zikir '+(idx+1)+' / '+S.zikirs.length+'</span>'+
        '<h1 class="t-lg acc" style="margin-top:2px">'+esc(z.name)+'</h1></div>'+
        '<span class="pill" style="background:color-mix(in srgb,var(--accent) 16%,transparent)">'+esc(targetsText(z))+' Hedef</span></div>'+
-     '<div style="text-align:center;margin:8px 0 0">'+
-       (z.img?'<img class="thumb" src="'+z.img+'" style="width:56px;height:56px;margin-bottom:4px" alt="">':'')+
-       (z.arabic?'<div class="arabic" style="font-size:'+(z.arabic.length>28?'24px':'40px')+';font-weight:700">'+esc(z.arabic)+'</div>':'')+
-       (z.sub?'<p class="muted" style="font-size:13px;margin-top:2px">'+esc(z.sub)+'</p>':'')+
-       (z.note?'<p class="muted" style="font-size:12px;margin-top:6px;line-height:1.5">'+esc(z.note)+'</p>':'')+'</div>'+
      '<div class="ringbox"><div class="halo"></div>'+
        '<div class="disc" id="disc"></div>'+
        '<svg viewBox="0 0 220 220"><circle class="tr" cx="110" cy="110" r="96"/><circle id="ring" cx="110" cy="110" r="96" stroke-dasharray="'+circ.toFixed(2)+'" stroke-dashoffset="'+circ.toFixed(2)+'"/></svg>'+
@@ -574,6 +574,11 @@ function pageCount(){
        '<span id="sc-count">0</span>'+
        '<span class="lab-s" style="margin-top:3px;font-size:12px">Kalan: <b class="acc" id="sc-rem">0</b> • <span id="sc-tg"></span></span></div></div>'+
      '<p class="lab-s" style="text-align:center;margin-top:6px;display:flex;gap:6px;justify-content:center;align-items:center">'+ic('tap','acc')+' Ekranın herhangi bir yerine dokunarak sayabilirsiniz</p>'+
+     '<div style="text-align:center;margin:14px 0 0">'+
+       (z.img?'<img class="thumb" src="'+z.img+'" style="width:56px;height:56px;margin-bottom:4px" alt="">':'')+
+       (z.arabic?'<div class="arabic" style="font-size:'+(z.arabic.length>28?'24px':'40px')+';font-weight:700">'+esc(z.arabic)+'</div>':'')+
+       (z.sub?'<p class="muted" style="font-size:13px;margin-top:2px">'+esc(z.sub)+'</p>':'')+
+       (z.note?'<p class="muted" style="font-size:12px;margin-top:6px;line-height:1.5">'+esc(z.note)+'</p>':'')+'</div>'+
      '<div class="card flat" style="margin-top:12px;padding:11px">'+
        '<div class="row"><span class="lab">Sıradaki: <b class="acc">'+(nxt.id===z.id?'—':esc(nxt.name))+'</b></span><span class="pill" style="font-size:11px" id="sc-left"></span></div>'+
        '<div class="bar" style="margin-top:8px;height:6px"><i id="sc-bar"></i></div>'+
@@ -585,7 +590,7 @@ function pageCount(){
        '<button class="btn" data-a="next" style="border-radius:12px;padding:12px">Sıradaki '+ic('fwd')+'</button></div></div>'+
    '<div class="col" style="gap:8px"><div class="row"><span class="row t-sm" style="gap:7px">'+ic('repeat','acc')+' Günlük Zincir Akışı</span>'+
      '<button class="lab acc" data-a="chainEdit">'+(chainEdit?'Bitti':'Sırayı Düzenle')+'</button></div>'+
-     '<div class="chain">'+chain+'</div></div>'+
+     '<span class="lab-s">Sıralamak için bir zikre basılı tutup sürükleyin.</span><div class="chain" data-sort="chain">'+chain+'</div></div>'+
    '</div>';
 }
 function updateSession(){
@@ -627,7 +632,7 @@ function showGoto(z,nx){
   var g=$('#goto');
   g.innerHTML='<div class="card"><div class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Elhamdülillah • Hedefe ulaşıldı</div>'+
    '<div class="t-sm">'+esc(z.name)+' tamamlandı</div>'+
-   '<div class="lab-s">2 saniye içinde <b class="acc">'+esc(nx.name)+'</b> başlayacak</div>'+
+   '<div class="lab-s">Hemen <b class="acc">'+esc(nx.name)+'</b> başlayacak</div>'+
    '<div class="tmbar"><i id="tmfill"></i></div>'+
    '<div class="row" style="width:100%;gap:8px"><button class="btn ghost" style="flex:1;border-radius:12px;padding:12px" data-a="gotoCancel">Beklet</button>'+
    '<button class="btn" style="flex:1;border-radius:12px;padding:12px" data-a="gotoNow" data-id="'+nx.id+'">Şimdi Başla '+ic('fwd')+'</button></div></div>';
@@ -635,7 +640,7 @@ function showGoto(z,nx){
   var f=$('#tmfill');f.style.width='100%';
   requestAnimationFrame(function(){requestAnimationFrame(function(){f.style.width='0%';});});
   clearTimeout(cdTimer);
-  cdTimer=setTimeout(function(){switchTo(nx.id);},2050);
+  cdTimer=setTimeout(function(){switchTo(nx.id);},850);
 }
 function hideGoto(){clearTimeout(cdTimer);var g=$('#goto');if(g)g.classList.remove('show');}
 function switchTo(id){
@@ -891,7 +896,92 @@ function wakeApply(){
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'){if(checkResets())renderAll();wakeApply();}
 });
-setInterval(function(){if(checkResets()&&route!=='add')renderAll();},30000);
+setInterval(function(){if(SORT&&SORT.on)return;if(checkResets()&&route!=='add')renderAll();},30000);
+
+
+/* ============ basılı tutup sürükleyerek sıralama ============ */
+var SORT=null,sortSuppress=0;
+function sid(x){return x.getAttribute('data-sid');}
+function sortStart(e){
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  var item=e.target.closest&&e.target.closest('[data-sid]');if(!item)return;
+  var box=item.parentNode;if(!box||!box.getAttribute('data-sort'))return;
+  if(e.target.closest('input,textarea,a,.iconbtn'))return;
+  if(box.getAttribute('data-sort')==='home'&&e.target.closest('button'))return;
+  SORT={item:item,box:box,x:e.clientX,y:e.clientY,cy:e.clientY,on:false};
+  SORT.timer=setTimeout(sortBegin,420);
+}
+function sortBegin(){
+  var s=SORT;if(!s)return;
+  var main=$('#view');
+  s.items=$$('[data-sid]',s.box).filter(function(x){return x.parentNode===s.box;});
+  s.rects=s.items.map(function(x){var r=x.getBoundingClientRect();return {top:r.top,h:r.height};});
+  s.gap=s.items.length>1?s.rects[1].top-(s.rects[0].top+s.rects[0].h):0;
+  s.from=s.items.indexOf(s.item);
+  s.newOrder=s.items.map(function(_,i){return i;});
+  s.scroll0=main.scrollTop;s.on=true;
+  s.items.forEach(function(x){x.style.transition='transform .16s';});
+  s.item.style.transition='none';s.item.style.position='relative';s.item.style.zIndex='7';
+  s.item.style.boxShadow='0 12px 32px rgba(0,0,0,.55)';s.item.style.outline='2px solid var(--accent)';
+  vib(35,true);
+  sortAuto();
+}
+function sortLayout(){
+  var s=SORT;if(!s||!s.on)return;
+  var main=$('#view');
+  var dy=s.cy-s.y+(main.scrollTop-s.scroll0);
+  var r=s.rects[s.from],center=r.top+r.h/2+dy;
+  var others=[];
+  for(var i=0;i<s.items.length;i++){if(i!==s.from)others.push(i);}
+  var to=0;
+  for(var k=0;k<others.length;k++){var o=s.rects[others[k]];if(center>o.top+o.h/2)to=k+1;}
+  var order=others.slice();order.splice(to,0,s.from);
+  s.newOrder=order;
+  var cur=s.rects[0].top,tops=[];
+  order.forEach(function(idx){tops[idx]=cur;cur+=s.rects[idx].h+s.gap;});
+  s.items.forEach(function(x,i){
+    if(i===s.from)x.style.transform='translateY('+dy+'px)';
+    else x.style.transform='translateY('+(tops[i]-s.rects[i].top)+'px)';
+  });
+}
+function sortAuto(){
+  var s=SORT;if(!s||!s.on)return;
+  var mr=$('#view').getBoundingClientRect(),sp=0;
+  if(s.cy<mr.top+90)sp=-Math.min(22,Math.ceil((mr.top+90-s.cy)/5));
+  else if(s.cy>mr.bottom-90)sp=Math.min(22,Math.ceil((s.cy-(mr.bottom-90))/5));
+  if(sp){$('#view').scrollTop+=sp;sortLayout();}
+  s.raf=requestAnimationFrame(sortAuto);
+}
+function sortMove(e){
+  var s=SORT;if(!s)return;
+  if(!s.on){
+    if(Math.abs(e.clientX-s.x)>10||Math.abs(e.clientY-s.y)>10){clearTimeout(s.timer);SORT=null;}
+    return;
+  }
+  s.cy=e.clientY;sortLayout();
+}
+function sortEnd(){
+  var s=SORT;if(!s)return;
+  clearTimeout(s.timer);cancelAnimationFrame(s.raf);
+  SORT=null;
+  if(!s.on)return;
+  sortSuppress=Date.now()+450;
+  var ids=s.items.map(sid),newIds=s.newOrder.map(function(i){return ids[i];});
+  if(newIds.join()!==ids.join()){
+    var slots=ids.map(function(id){return S.zikirs.indexOf(byId(id));}).sort(function(a,b){return a-b;});
+    var objs=newIds.map(byId);
+    slots.forEach(function(p,k){S.zikirs[p]=objs[k];});
+    save();vib(20,true);
+  }
+  renderAll();
+}
+document.addEventListener('pointerdown',sortStart);
+document.addEventListener('pointermove',sortMove);
+document.addEventListener('pointerup',sortEnd);
+document.addEventListener('pointercancel',sortEnd);
+document.addEventListener('touchmove',function(e){if(SORT&&SORT.on)e.preventDefault();},{passive:false});
+document.addEventListener('contextmenu',function(e){if(SORT)e.preventDefault();});
+document.addEventListener('click',function(e){if(Date.now()<sortSuppress){e.stopPropagation();e.preventDefault();}},true);
 
 document.addEventListener('click',function(e){
   var t=e.target.closest('[data-a]');
@@ -1004,7 +1094,7 @@ function act(a,id,e,el){
       break;
     case 'defaults':
       if(confirmBox('Hazır zikir listesi geri yüklensin mi? Eklediğiniz zikirler ve sayaçlar silinir (istatistikler korunur).')){
-        S.zikirs=defaultZikirs();S.zl=4;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
+        S.zikirs=defaultZikirs();S.zl=5;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
       }
       break;
   }
