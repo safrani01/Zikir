@@ -461,8 +461,6 @@ var I18N={
 "Şekil ve Suret Veren":["The Fashioner, Who Gives Form","Der Gestalt und Form Gebende"],
 "Borçtan Kurtulma ve Rızık Duası":["Prayer for Relief from Debt and Provision","Gebet um Befreiung von Schulden und um Versorgung"],
 "Sıkıntı ve Borçtan Kurtulma":["Relief from Distress and Debt","Befreiung von Kummer und Schulden"],
-"Her gün okuyan, ruhaniler ile irtibata geçer.":["Whoever recites it every day connects with the spiritual beings (ruhaniyyat).","Wer es täglich liest, tritt mit den Geistwesen (Ruhaniyyat) in Verbindung."],
-"Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Bu duayı 20 defa suya okuyup üzerine 7 Fâtiha daha okuyarak 20 gün konuşma sıkıntısı çeken, kekeleyen kişilere içirmek Allah c.c.’nün izniyle çok fayda sağlar.":["Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Reciting this prayer 20 times over water, then reciting Fâtiha 7 more times over it, and giving it to people who stutter or have difficulty speaking for 20 days is very beneficial, by the permission of Allah.","Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Dieses Gebet 20-mal über Wasser zu lesen, darüber noch 7-mal die Fâtiha zu rezitieren und das Wasser 20 Tage lang Menschen mit Sprachschwierigkeiten oder Stottern zu trinken zu geben, ist mit Allahs Erlaubnis sehr hilfreich."],
 "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur.":["After reciting Yâ Vâsi'u 137 times, recite: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm”.","Nachdem Yâ Vâsi'u 137-mal gelesen wurde, wird gelesen: „vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm“."],
 /* toast ve onaylar */
 "Hedef tamamlandı":["Goal completed","Ziel erreicht"],
@@ -564,7 +562,7 @@ function Z(id,name,sub,arabic,targets,note,group){
 }
 function defaultZikirs(){return [
   Z('d1','Rabbişrahli Sadri Duası','','رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي',[20],
-    'Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Bu duayı 20 defa suya okuyup üzerine 7 Fâtiha daha okuyarak 20 gün konuşma sıkıntısı çeken, kekeleyen kişilere içirmek Allah c.c.’nün izniyle çok fayda sağlar.'),
+    'Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli.'),
   Z('d3','Yâ Rahmân','Dünyada Merhamet Eden','يَا رَحْمَنُ',[298]),
   Z('d4','Yâ Rahîm','Ahirette Merhamet Eden','يَا رَحِيمُ',[258]),
   Z('d5','Yâ Melik (90)','Mülkün Gerçek Sahibi','يَا مَلِكُ',[90]),
@@ -586,11 +584,11 @@ function defaultZikirs(){return [
   Z('d19','Yâ Vehhâb','','يَا وَهَّابُ',[196]),
   Z('d20','Yâ Latîf','','يَا لَطِيفُ',[129]),
   Z('d21','Yâ Mütekebbir','','يَا مُتَكَبِّرُ',[662]),
-  Z('d22','Yâ Musavvir','Şekil ve Suret Veren','يَا مُصَوِّرُ',[365],'Her gün okuyan, ruhaniler ile irtibata geçer.'),
+  Z('d22','Yâ Musavvir','Şekil ve Suret Veren','يَا مُصَوِّرُ',[365]),
   Z('d23','Yâ Vedûd','','يَا وَدُودُ',[400])
 ];}
 function defaultState(){return {
-  v:2,zl:6,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
+  v:2,zl:7,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
   totals:{reps:0,done:0},days:{},night:false,
   set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
        autoReset:true,autoAdvance:true,wake:false,lang:'tr'}
@@ -605,13 +603,13 @@ function load(){
       for(var k in d){if(!(k in j))j[k]=d[k];}
       for(var s in d.set){if(!(s in j.set))j.set[s]=d.set[s];}
       if(!Array.isArray(j.zikirs)||!j.zikirs.length)j.zikirs=d.zikirs;
-      if(oldZl===4||oldZl===5){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
+      if(oldZl===4||oldZl===5||oldZl===6){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
         var dm={};d.zikirs.forEach(function(q){dm[q.id]=q;});
-        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;}});
-        j.zl=6;
-      }else if(oldZl!==6){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
+        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;if(q.id==='d1'||q.id==='d22')q.note=n.note;}});
+        j.zl=7;
+      }else if(oldZl!==7){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
         var mine=j.zikirs.filter(function(q){return String(q.id).charAt(0)==='u';});
-        j.zikirs=d.zikirs.concat(mine);j.zl=6;j.active='d1';
+        j.zikirs=d.zikirs.concat(mine);j.zl=7;j.active='d1';
         j.counts={};mine.forEach(function(q){if(j.counts)j.counts[q.id]=0;});j.period={};
       }
       return j;
@@ -1368,7 +1366,7 @@ function act(a,id,e,el){
       break;
     case 'defaults':
       if(confirmBox('Hazır zikir listesi geri yüklensin mi? Eklediğiniz zikirler ve sayaçlar silinir (istatistikler korunur).')){
-        S.zikirs=defaultZikirs();S.zl=6;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
+        S.zikirs=defaultZikirs();S.zl=7;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
       }
       break;
   }
