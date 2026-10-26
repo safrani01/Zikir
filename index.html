@@ -277,13 +277,285 @@ var $=function(s,r){return (r||document).querySelector(s);};
 var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function ic(n,c){return '<svg class="ic '+(c||'')+'" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-'+n+'"/></svg>';}
-function fmt(n){return Number(n||0).toLocaleString('tr-TR');}
+function fmt(n){return Number(n||0).toLocaleString(({tr:'tr-TR',en:'en-US',de:'de-DE'})[(S&&S.set&&S.set.lang)||'tr']);}
 function pad(n){return (n<10?'0':'')+n;}
 function dKey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function shifted(d){return new Date((d||new Date()).getTime()+10*60000);}   // 23:50 => yeni gün
 function dayKey(d){return dKey(shifted(d));}
 function weekKey(d){var s=shifted(d);while(s.getDay()!==6&&s.getDay()!==1){s.setDate(s.getDate()-1);}return dKey(s);}  // Cuma/Pazar 23:50
 function periodKey(g){return g==='daily'?dayKey():g==='weekly'?weekKey():'u';}
+
+/* ============ çoklu dil (TR / EN / DE) ============ */
+var LOC={tr:'tr-TR',en:'en-US',de:'de-DE'};
+function lang(){return (S&&S.set&&S.set.lang)||'tr';}
+var I18N={
+"Ana Sayfa":["Home","Startseite"],
+"Zikir Çek":["Count Dhikr","Zikir zählen"],
+"Zikir Ekle":["Add Dhikr","Neuer Zikir"],
+"İstatistik":["Stats","Statistik"],
+"Ayarlar":["Settings","Einstellungen"],
+"Tema":["Theme","Design"],
+"Düzenle":["Edit","Bearbeiten"],
+"Ses":["Sound","Ton"],
+"Özel renk":["Custom color","Eigene Farbe"],
+"● Cihazda kayıtlı":["● Saved on device","● Auf dem Gerät gespeichert"],
+"Selamün Aleyküm":["As-salāmu ʿalaykum","As-salāmu ʿalaykum"],
+"Gönlünüze ferahlık, gününüze bereket dileriz.":["May your heart find ease and your day be blessed.","Möge Ihr Herz Ruhe finden und Ihr Tag gesegnet sein."],
+"Bugünkü Zikir":["Today's Dhikr","Heutiger Zikir"],
+"adet":["count","Stück"],
+"Toplam Tamamlanan":["Total Completed","Insgesamt abgeschlossen"],
+"hedef":["goals","Ziele"],
+"Günlük Zikirler":["Daily Dhikr","Tägliche Zikir"],
+"Haftalık Zikirler":["Weekly Dhikr","Wöchentliche Zikir"],
+"Süresiz Zikirler":["Open-ended Dhikr","Fortlaufende Zikir"],
+"Günlük zikirler saat":["Daily dhikr reset automatically at","Tägliche Zikir werden automatisch um"],
+"’de otomatik sıfırlanır.":["."," Uhr zurückgesetzt."],
+"Otomatik sıfırlama kapalı (Ayarlar’dan açabilirsiniz).":["Auto reset is off (you can turn it on in Settings).","Automatisches Zurücksetzen ist aus (in den Einstellungen aktivierbar)."],
+"Sıralamak için bir zikre basılı tutup sürükleyin.":["Press and hold a dhikr, then drag to reorder.","Einen Zikir gedrückt halten und zum Sortieren ziehen."],
+"Sıfırla":["Reset","Zurücksetzen"],
+"Tekrar Aç":["Reopen","Erneut öffnen"],
+"Tüm Zikirleri Sıfırla":["Reset All Dhikr","Alle Zikir zurücksetzen"],
+"Sayaçlar yalnızca bu cihazda saklanır.":["Counters are stored only on this device.","Zähler werden nur auf diesem Gerät gespeichert."],
+"Bu grupta zikir yok.":["There is no dhikr in this group.","In dieser Gruppe gibt es keinen Zikir."],
+"Aşağıdan yeni bir zikir ekleyebilirsiniz.":["You can add a new dhikr below.","Unten können Sie einen neuen Zikir hinzufügen."],
+"Tamamlandı":["Completed","Abgeschlossen"],
+"● Zincir:":["● Chain:","● Kette:"],
+"Otomatik Geçiş":["Auto-Advance","Automatischer Wechsel"],
+"Açık (Kesintisiz)":["On (continuous)","An (fortlaufend)"],
+"Kapalı (Manuel)":["Off (manual)","Aus (manuell)"],
+"Kalan:":["Left:","Übrig:"],
+"Ekranın herhangi bir yerine dokunarak sayabilirsiniz":["Tap anywhere on the screen to count","Zum Zählen irgendwo auf den Bildschirm tippen"],
+"Sıradaki:":["Next:","Als Nächstes:"],
+"Hedefe varınca otomatik geçilir":["Advances automatically at the goal","Wechselt am Ziel automatisch"],
+"Hedefe varınca bekler (manuel)":["Waits at the goal (manual)","Wartet am Ziel (manuell)"],
+"Şimdi Atla":["Skip Now","Jetzt überspringen"],
+"Önceki":["Previous","Zurück"],
+"Sıradaki":["Next","Weiter"],
+"Günlük Zincir Akışı":["Daily Chain Flow","Tägliche Zikir-Kette"],
+"Sırayı Düzenle":["Edit Order","Reihenfolge ändern"],
+"Bitti":["Done","Fertig"],
+"Şu Anki":["Current","Aktuell"],
+"Elhamdülillah • Hedefe ulaşıldı":["Alhamdulillah • Goal reached","Alhamdulillah • Ziel erreicht"],
+"Beklet":["Hold","Anhalten"],
+"Şimdi Başla":["Start Now","Jetzt starten"],
+"Yeni Zikir Ekle":["Add New Dhikr","Neuen Zikir hinzufügen"],
+"Zikri Düzenle":["Edit Dhikr","Zikir bearbeiten"],
+"Kaydet":["Save","Speichern"],
+"ZİKİR BAŞLIĞI *":["DHIKR TITLE *","ZIKIR-TITEL *"],
+"Zorunlu Alan":["Required","Pflichtfeld"],
+"ARAPÇA METİN":["ARABIC TEXT","ARABISCHER TEXT"],
+"(isteğe bağlı)":["(optional)","(optional)"],
+"KISA AÇIKLAMA":["SHORT DESCRIPTION","KURZBESCHREIBUNG"],
+"(başlığın altında görünür)":["(shown under the title)","(erscheint unter dem Titel)"],
+"HEDEF SAYI":["TARGET COUNT","ZIELZAHL"],
+"İKİNCİ HEDEF":["SECOND TARGET","ZWEITES ZIEL"],
+"(isteğe bağlı — örn. 90 sonra 121)":["(optional — e.g. 90, then 121)","(optional — z. B. erst 90, dann 121)"],
+"AÇIKLAMA / FAZİLETİ":["DESCRIPTION / MERIT","BESCHREIBUNG / VERDIENST"],
+"Kalbi niyetinizi buraya not düşebilirsiniz":["You can note your intention here","Hier können Sie Ihre Absicht notieren"],
+"ZİKİR GRUBU / TİPİ":["DHIKR GROUP / TYPE","ZIKIR-GRUPPE / TYP"],
+"Sıfırlama Döngüsü":["Reset Cycle","Rücksetz-Zyklus"],
+"Günlük":["Daily","Täglich"],
+"Her gün saat 23:50’de otomatik sıfırlanır ve yeni güne hazırlanır.":["Resets automatically every day at 23:50, ready for the new day.","Wird jeden Tag um 23:50 Uhr automatisch zurückgesetzt, bereit für den neuen Tag."],
+"Haftalık":["Weekly","Wöchentlich"],
+"Her Cuma ve Pazar gecesi (23:50) sıfırlanarak haftalık vird düzenini korur.":["Resets every Friday and Sunday night (23:50), keeping your weekly wird routine.","Wird jeden Freitag- und Sonntagabend (23:50 Uhr) zurückgesetzt und erhält so die wöchentliche Wird-Routine."],
+"Süresiz":["No reset","Fortlaufend"],
+"Asla otomatik sıfırlanmaz, sayım kesintisiz sürer.":["Never resets automatically; counting continues uninterrupted.","Wird nie automatisch zurückgesetzt; das Zählen läuft ununterbrochen weiter."],
+"RESİM / SİMGE EKLE":["ADD IMAGE / ICON","BILD / SYMBOL HINZUFÜGEN"],
+"İsteğe Bağlı":["Optional","Optional"],
+"Bu zikre özel bir görsel ekleyin.":["Add an image for this dhikr.","Fügen Sie ein Bild für diesen Zikir hinzu."],
+"Kamera":["Camera","Kamera"],
+"Galeri":["Gallery","Galerie"],
+"Tamamlama Sesi & Titreşim":["Completion Sound & Vibration","Abschlusston & Vibration"],
+"Hedefe ulaşıldığında geri bildirim ver":["Give feedback when the goal is reached","Rückmeldung beim Erreichen des Ziels"],
+"Ney Sesi":["Ney Sound","Ney-Klang"],
+"Su Damlası":["Water Drop","Wassertropfen"],
+"Zarif Zil":["Gentle Bell","Sanfte Glocke"],
+"Titreşim":["Vibration","Vibration"],
+"Zikri Kaydet ve Başla":["Save Dhikr & Start","Zikir speichern & starten"],
+"Kaydet ve Say":["Save & Count","Speichern & zählen"],
+"Bu Zikri Sil":["Delete This Dhikr","Diesen Zikir löschen"],
+"Tüm verileriniz yalnızca cihazınızın yerel hafızasında güvenle saklanır.":["All your data is stored securely only in your device's local storage.","Alle Ihre Daten werden ausschließlich im lokalen Speicher Ihres Geräts gespeichert."],
+"Örn: Yâ Fettâh veya Sübhânallâh":["e.g. Yâ Fettâh or Subhanallah","z. B. Yâ Fettâh oder Subhanallah"],
+"Örn: Rızık Kapılarını Açan":["e.g. Opener of the Doors of Provision","z. B. Der die Türen der Versorgung öffnet"],
+"Boş bırakılabilir":["Can be left empty","Kann leer bleiben"],
+"Örn: İş bulmak, ferahlık ve şifa niyetiyle okunur…":["e.g. Recited with the intention of finding work, ease and healing…","z. B. Wird mit der Absicht gelesen, Arbeit, Erleichterung und Heilung zu finden…"],
+"İstatistikler":["Statistics","Statistiken"],
+"● Huzur Analitiği":["● Serenity Analytics","● Huzur-Analyse"],
+"Manevi Ritim":["Spiritual Rhythm","Spiritueller Rhythmus"],
+"Kalpler ancak Allah’ı anmakla huzur bulur.":["Surely in the remembrance of Allah do hearts find rest.","Wahrlich, im Gedenken Allahs finden die Herzen Ruhe."],
+"Bugünkü Özet":["Today's Summary","Heutige Übersicht"],
+"Canlı Veri":["Live Data","Live-Daten"],
+"Tamamlanan":["Completed","Abgeschlossen"],
+"Adet":["times","Mal"],
+"Toplam Tekrar":["Total Repetitions","Wiederholungen gesamt"],
+"Günlük Seri":["Daily Streak","Tagesserie"],
+"Gün":["days","Tage"],
+"Hafta":["Week","Woche"],
+"Ay":["Month","Monat"],
+"Yıl":["Year","Jahr"],
+"Haftalık Genel Bakış":["Weekly Overview","Wochenübersicht"],
+"Son 30 Gün":["Last 30 Days","Letzte 30 Tage"],
+"Yıllık Genel Bakış":["Yearly Overview","Jahresübersicht"],
+"Pzt":["Mon","Mo"],"Sal":["Tue","Di"],"Çar":["Wed","Mi"],"Per":["Thu","Do"],"Cum":["Fri","Fr"],"Cmt":["Sat","Sa"],"Paz":["Sun","So"],
+"Oca":["Jan","Jan"],"Şub":["Feb","Feb"],"Mar":["Mar","Mär"],"Nis":["Apr","Apr"],"May":["May","Mai"],"Haz":["Jun","Jun"],"Tem":["Jul","Jul"],"Ağu":["Aug","Aug"],"Eyl":["Sep","Sep"],"Eki":["Oct","Okt"],"Kas":["Nov","Nov"],"Ara":["Dec","Dez"],
+"Zikir Performansı & Dağılımı":["Dhikr Performance & Distribution","Zikir-Leistung & Verteilung"],
+"Bu aralıkta henüz sayım yok. Zikir çekmeye başlayınca burada görünecek.":["No counts in this period yet. They will appear here once you start counting.","In diesem Zeitraum gibt es noch keine Zählungen. Sie erscheinen hier, sobald Sie mit dem Zählen beginnen."],
+"(silinmiş zikir)":["(deleted dhikr)","(gelöschter Zikir)"],
+"Kazanılan Başarılar":["Achievements Earned","Errungene Erfolge"],
+"İlk Adım":["First Step","Erster Schritt"],
+"İlk 100 zikir":["First 100 dhikr","Die ersten 100 Zikir"],
+"7 Gün Serisi":["7-Day Streak","7-Tage-Serie"],
+"Kesintisiz 1 hafta":["One week without a break","Eine Woche ohne Pause"],
+"Gece Kuşu":["Night Owl","Nachteule"],
+"23:00 sonrası tefekkür":["Reflection after 23:00","Besinnung nach 23:00 Uhr"],
+"Gece zikri çek":["Do a night dhikr","Nachts Zikir machen"],
+"10.000 Kulübü":["10,000 Club","10.000er-Club"],
+"10.000 sınırını aşma":["Pass the 10,000 mark","Die 10.000er-Marke überschreiten"],
+"Kazanıldı":["Earned","Erreicht"],
+"Günlük veriler her gece 23:50’de arşivlenir; sayaçlar sıfırlanır, istatistikler korunur.":["Daily data is archived every night at 23:50; counters reset, statistics are kept.","Die Tagesdaten werden jede Nacht um 23:50 Uhr archiviert; Zähler werden zurückgesetzt, Statistiken bleiben erhalten."],
+"Kişiselleştirme ve Tercihler":["Personalization & Preferences","Personalisierung & Einstellungen"],
+"Görünüm & Tema":["Appearance & Theme","Darstellung & Design"],
+"Tema Modu":["Theme Mode","Designmodus"],
+"Gündüz":["Day","Tag"],
+"Gök mavisi açık":["Light sky blue","Helles Himmelblau"],
+"Gece":["Night","Nacht"],
+"Açık siyah":["Soft black","Sanftes Schwarz"],
+"Renk Vurgusu":["Accent Color","Akzentfarbe"],
+"Dil Seçimi (Language)":["Language","Sprache"],
+"Titreşim & Dokunsal Geri Bildirim":["Vibration & Haptic Feedback","Vibration & haptisches Feedback"],
+"Her Sayımda Hafif Titreşim":["Light Vibration on Every Count","Leichte Vibration bei jeder Zählung"],
+"Tesbih tanesi hissi veren mikro haptik":["Micro-haptics that feel like prayer beads","Mikro-Haptik, die sich wie Gebetsperlen anfühlt"],
+"Zikir hedefi bitince tek uzun titreşim gelir (bu ayardan bağımsız)":["One long vibration when the goal is reached (independent of this setting)","Eine lange Vibration, wenn das Ziel erreicht ist (unabhängig von dieser Einstellung)"],
+"Ses ve Efektler":["Sound & Effects","Ton & Effekte"],
+"Ses (genel)":["Sound (master)","Ton (allgemein)"],
+"Kapalıyken hiçbir ses çalmaz":["No sound plays when off","Wenn ausgeschaltet, wird kein Ton abgespielt"],
+"Tamamlama Sesi":["Completion Sound","Abschlusston"],
+"Hedef sonunda tebrik sesi":["Congratulation sound at the end of a goal","Glückwunschton am Ende eines Ziels"],
+"Ses Seviyesi":["Volume","Lautstärke"],
+"Sayım Sesi Türü":["Count Sound Type","Zählton"],
+"Ney Tonu":["Ney Tone","Ney-Ton"],
+"Klasik Tık":["Classic Click","Klassisches Klicken"],
+"Sessiz":["Silent","Stumm"],
+"Sıfırlama ve Otomasyon":["Reset & Automation","Zurücksetzen & Automatisierung"],
+"Otomatik Sıfırlama":["Auto Reset","Automatisches Zurücksetzen"],
+"Günlük zikirler her gece 23:50’de sıfırlanır (istatistik korunur)":["Daily dhikr reset every night at 23:50 (statistics are kept)","Tägliche Zikir werden jede Nacht um 23:50 Uhr zurückgesetzt (Statistiken bleiben erhalten)"],
+"Hedefe varınca sıradakine geç":["Advance to the next one at the goal","Am Ziel zum nächsten wechseln"],
+"Zikir Çek ekranındaki otomatik geçiş":["Auto-advance on the Count screen","Automatischer Wechsel im Zählbildschirm"],
+"Ekran açık kalsın":["Keep screen on","Bildschirm eingeschaltet lassen"],
+"Zikir Çek ekranındayken ekran kararmasın":["Don't let the screen dim on the Count screen","Bildschirm im Zählmodus nicht abdunkeln"],
+"Verileri Yedekle & Geri Yükle":["Back Up & Restore Data","Daten sichern & wiederherstellen"],
+"Zikir geçmişinizi JSON dosyası olarak saklayın":["Save your dhikr history as a JSON file","Speichern Sie Ihren Zikir-Verlauf als JSON-Datei"],
+"Dışa Aktar":["Export","Exportieren"],
+"İçe Aktar":["Import","Importieren"],
+"Tüm İstatistikleri Sıfırla":["Reset All Statistics","Alle Statistiken zurücksetzen"],
+"Hazır Zikir Listesini Geri Yükle":["Restore Default Dhikr List","Standard-Zikirliste wiederherstellen"],
+"Uygulama Hakkında":["About the App","Über die App"],
+"Dijital Tesbihat Deneyimi":["A Digital Tasbih Experience","Ein digitales Tesbih-Erlebnis"],
+"“Kalpler ancak Allah’ı anmakla huzur bulur.” (Ra‘d, 28)":["“Surely in the remembrance of Allah do hearts find rest.” (Ar-Ra‘d, 28)","„Wahrlich, im Gedenken Allahs finden die Herzen Ruhe.“ (Ar-Ra‘d, 28)"],
+"Sayaca Dön":["Back to Counter","Zurück zum Zähler"],
+/* hazır zikirlerin açıklamaları */
+"Dünyada Merhamet Eden":["The One Who Shows Mercy in This World","Der in dieser Welt Barmherzige"],
+"Ahirette Merhamet Eden":["The One Who Shows Mercy in the Hereafter","Der im Jenseits Barmherzige"],
+"Mülkün Gerçek Sahibi":["The True Owner of All Dominion","Der wahre Herrscher über alle Herrschaft"],
+"Rızık Kapılarını Açan":["Opener of the Doors of Provision","Der die Türen der Versorgung öffnet"],
+"Şekil ve Suret Veren":["The Fashioner, Who Gives Form","Der Gestalt und Form Gebende"],
+"Borçtan Kurtulma ve Rızık Duası":["Prayer for Relief from Debt and Provision","Gebet um Befreiung von Schulden und um Versorgung"],
+"Sıkıntı ve Borçtan Kurtulma":["Relief from Distress and Debt","Befreiung von Kummer und Schulden"],
+"Her gün okuyan, ruhaniler ile irtibata geçer.":["Whoever recites it every day connects with the spiritual beings (ruhaniyyat).","Wer es täglich liest, tritt mit den Geistwesen (Ruhaniyyat) in Verbindung."],
+"Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Bu duayı 20 defa suya okuyup üzerine 7 Fâtiha daha okuyarak 20 gün konuşma sıkıntısı çeken, kekeleyen kişilere içirmek Allah c.c.’nün izniyle çok fayda sağlar.":["Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Reciting this prayer 20 times over water, then reciting Fâtiha 7 more times over it, and giving it to people who stutter or have difficulty speaking for 20 days is very beneficial, by the permission of Allah.","Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli. — Dieses Gebet 20-mal über Wasser zu lesen, darüber noch 7-mal die Fâtiha zu rezitieren und das Wasser 20 Tage lang Menschen mit Sprachschwierigkeiten oder Stottern zu trinken zu geben, ist mit Allahs Erlaubnis sehr hilfreich."],
+"137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur.":["After reciting Yâ Vâsi'u 137 times, recite: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm”.","Nachdem Yâ Vâsi'u 137-mal gelesen wurde, wird gelesen: „vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm“."],
+/* toast ve onaylar */
+"Hedef tamamlandı":["Goal completed","Ziel erreicht"],
+"Elhamdülillah, tüm zikirler tamamlandı":["Alhamdulillah, all dhikr completed","Alhamdulillah, alle Zikir abgeschlossen"],
+"Tüm zikirler tamamlandı":["All dhikr completed","Alle Zikir abgeschlossen"],
+"Lütfen önce bir zikir başlığı girin.":["Please enter a dhikr title first.","Bitte geben Sie zuerst einen Zikir-Titel ein."],
+"Hedef sayı en az 1 olmalı.":["The target count must be at least 1.","Die Zielzahl muss mindestens 1 sein."],
+"Görsel okunamadı.":["The image could not be read.","Das Bild konnte nicht gelesen werden."],
+"Mevcut veriler bu yedekle değiştirilecek. Devam edilsin mi?":["Current data will be replaced with this backup. Continue?","Die aktuellen Daten werden durch diese Sicherung ersetzt. Fortfahren?"],
+"Yedek geri yüklendi.":["Backup restored.","Sicherung wiederhergestellt."],
+"Bu dosya geçerli bir yedek değil.":["This file is not a valid backup.","Diese Datei ist keine gültige Sicherung."],
+"Bu zikrin sayacı sıfırlanıp yeniden açılsın mı?":["Reset this dhikr's counter and reopen it?","Zähler dieses Zikirs zurücksetzen und erneut öffnen?"],
+"Tüm zikir sayaçları sıfırlansın mı? (İstatistikler korunur)":["Reset all dhikr counters? (Statistics are kept)","Alle Zikir-Zähler zurücksetzen? (Statistiken bleiben erhalten)"],
+"Tüm sayaçlar sıfırlandı":["All counters reset","Alle Zähler zurückgesetzt"],
+"Geçiş bekletildi":["Advance on hold","Wechsel angehalten"],
+"En az bir zikir kalmalı.":["At least one dhikr must remain.","Mindestens ein Zikir muss bleiben."],
+"Zikir silindi":["Dhikr deleted","Zikir gelöscht"],
+"Yedek dosyası hazırlandı":["Backup file prepared","Sicherungsdatei erstellt"],
+"Yedek alınamadı.":["Backup failed.","Sicherung fehlgeschlagen."],
+"Tüm istatistikler (günlük kayıtlar, toplamlar, rozetler) silinsin mi? Bu işlem geri alınamaz.":["Delete all statistics (daily records, totals, badges)? This cannot be undone.","Alle Statistiken (Tagesdaten, Summen, Abzeichen) löschen? Dies kann nicht rückgängig gemacht werden."],
+"İstatistikler sıfırlandı":["Statistics reset","Statistiken zurückgesetzt"],
+"Hazır zikir listesi geri yüklensin mi? Eklediğiniz zikirler ve sayaçlar silinir (istatistikler korunur).":["Restore the default dhikr list? The dhikr you added and the counters will be deleted (statistics are kept).","Standard-Zikirliste wiederherstellen? Hinzugefügte Zikir und Zähler werden gelöscht (Statistiken bleiben erhalten)."],
+"Liste geri yüklendi":["List restored","Liste wiederhergestellt"],
+"Zikir listenize kaydedildi.":["Saved to your dhikr list.","In Ihrer Zikir-Liste gespeichert."],
+"Kaydedildi! Sayım başlatılıyor…":["Saved! Starting the count…","Gespeichert! Das Zählen beginnt…"]
+};
+var GREET={"Sabah Huzuru":["Morning Serenity","Morgenfrieden"],"Öğle Huzuru":["Midday Serenity","Mittagsfrieden"],"İkindi Huzuru":["Afternoon Serenity","Nachmittagsfrieden"],"Akşam Huzuru":["Evening Serenity","Abendfrieden"],"Gece Huzuru":["Night Serenity","Nachtfrieden"]};
+var CNAME={"Gök Mavisi":["Sky Blue","Himmelblau"],"Turkuaz":["Turquoise","Türkis"],"Mor Mavi":["Indigo","Indigo"],"Zümrüt":["Emerald","Smaragd"],"Kehribar":["Amber","Bernstein"],"Özel":["Custom","Benutzerdefiniert"]};
+var IP=[
+ [/^Vakit: (.+)$/,function(m,l){var g=GREET[m[1]];return (l?"Tageszeit: ":"Time of day: ")+(g?g[l]:m[1]);}],
+ [/^Tümü \((\d+)\)$/,function(m,l){return (l?"Alle (":"All (")+m[1]+")";}],
+ [/^%(\d+) Tamamlandı$/,function(m,l){return l?m[1]+" % abgeschlossen":m[1]+"% complete";}],
+ [/^Başla \((\d+)\)$/,function(m,l){return "Start ("+m[1]+")";}],
+ [/^Say \((\d+)\)$/,function(m,l){return (l?"Zählen (":"Count (")+m[1]+")";}],
+ [/^(\d+) Tekrar$/,function(m,l){return m[1]+(l?" Wdh.":" reps");}],
+ [/^Zikir (\d+) \/ (\d+)$/,function(m,l){return (l?"Zikir ":"Dhikr ")+m[1]+" / "+m[2];}],
+ [/^(.+) Hedef$/,function(m,l){return (l?"Ziel: ":"Target: ")+m[1];}],
+ [/^Hedef: (.+)$/,function(m,l){return (l?"Ziel: ":"Target: ")+m[1];}],
+ [/^Aşama (\d+)\/(\d+)$/,function(m,l){return (l?"Stufe ":"Stage ")+m[1]+"/"+m[2];}],
+ [/^Son (\d+) sayı$/,function(m,l){return l?"noch "+m[1]:m[1]+" left";}],
+ [/^(\d+ \/ \d+) Devam Ediyor$/,function(m,l){return m[1]+(l?" Läuft":" In progress");}],
+ [/^(\d+ \/ \d+) • Sırada$/,function(m,l){return m[1]+(l?" • Als Nächstes":" • Up next");}],
+ [/^(\d+ \/ \d+) Tamamlandı$/,function(m,l){return m[1]+(l?" Fertig":" Done");}],
+ [/^(Bu haftanın|Son 30 günün|Son 12 ayın) toplam hacmi: (.+) tekrar$/,function(m,l){
+   var p={"Bu haftanın":["This week's","Das Gesamtvolumen dieser Woche"],"Son 30 günün":["The last 30 days'","Das Gesamtvolumen der letzten 30 Tage"],"Son 12 ayın":["The last 12 months'","Das Gesamtvolumen der letzten 12 Monate"]}[m[1]][l];
+   return l?p+": "+m[2]+" Wdh.":p+" total volume: "+m[2]+" reps";}],
+ [/^(.+) tekrar$/,function(m,l){return m[1]+(l?" Wdh.":" reps");}],
+ [/^(\d+) Aktif Zikir$/,function(m,l){return l?m[1]+" aktive Zikir":m[1]+" active dhikr";}],
+ [/^(\d+) \/ 4 Açıldı$/,function(m,l){return m[1]+(l?" / 4 freigeschaltet":" / 4 unlocked");}],
+ [/^(\d+) \/ (\d+) gün$/,function(m,l){return m[1]+" / "+m[2]+(l?" Tage":" days");}],
+ [/^(.+) tamamlandı$/,function(m,l){return m[1]+(l?" abgeschlossen":" completed");}],
+ [/^(.+) \((#[0-9a-fA-F]{6})\)$/,function(m,l){var c=CNAME[m[1]];return (c?c[l]:m[1])+" ("+m[2]+")";}],
+ [/^(Gök Mavisi|Turkuaz|Mor Mavi|Zümrüt|Kehribar)$/,function(m,l){return CNAME[m[1]][l];}],
+ [/^Sürüm (.+) \(Huzur Sürümü\)$/,function(m,l){return (l?"Version ":"Version ")+m[1]+(l?" (Huzur-Edition)":" (Serenity Edition)");}],
+ [/^“(.+)” sayacı sıfırlansın mı\?$/,function(m,l){return l?"Zähler von „"+m[1]+"“ zurücksetzen?":"Reset the counter of “"+m[1]+"”?";}],
+ [/^“(.+)” silinsin mi\? Geçmiş istatistikler korunur\.$/,function(m,l){return l?"„"+m[1]+"“ löschen? Frühere Statistiken bleiben erhalten.":"Delete “"+m[1]+"”? Past statistics are kept.";}]
+];
+function tr(s){
+  var l=lang();if(l==='tr'||!s)return s;
+  var k=String(s).trim();if(!k)return s;
+  var li=l==='en'?0:1,e=I18N[k];
+  if(e)return String(s).replace(k,function(){return e[li];});
+  for(var i=0;i<IP.length;i++){
+    var m=k.match(IP[i][0]);
+    if(m){var out=IP[i][1](m,li);return String(s).replace(k,function(){return out;});}
+  }
+  return s;
+}
+function applyLang(root){
+  document.documentElement.lang=lang();
+  root=root||document.body;
+  var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    var p=n.parentNode;if(!p)return 2;
+    var t=p.nodeName;if(t==='SCRIPT'||t==='STYLE'||t==='TEXTAREA'||t==='TITLE')return 2;
+    if(p.closest&&p.closest('svg'))return 2;
+    return 1;}});
+  var nodes=[],n;while((n=w.nextNode()))nodes.push(n);
+  nodes.forEach(function(n){
+    var base=(n.__o!==undefined&&n.__t===n.nodeValue)?n.__o:n.nodeValue;
+    var r=tr(base);
+    if(r!==n.nodeValue){n.__o=base;n.__t=r;n.nodeValue=r;}
+    else if(n.__o===undefined&&r===base){/* çevirisi yok */}
+  });
+  $$('[placeholder],[aria-label]',root).forEach(function(e){
+    ['placeholder','aria-label'].forEach(function(a){
+      var v=e.getAttribute(a);if(v===null)return;
+      var key='__o_'+a,tk='__t_'+a;
+      var base=(e[key]!==undefined&&e[tk]===v)?e[key]:v;
+      var r=tr(base);
+      if(r!==v){e[key]=base;e[tk]=r;e.setAttribute(a,r);}
+    });
+  });
+}
 
 /* ============ varsayılan zikirler ============ */
 function Z(id,name,sub,arabic,targets,note,group){
@@ -304,7 +576,7 @@ function defaultZikirs(){return [
   Z('d10','Yâ Selâm','','يَا سَلَامُ',[131]),
   Z('d11',"Yâ Vâsi'u",'','يَا وَاسِعُ',[137],
     "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur."),
-  Z('d12','Borç ve Rızık Duası','','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11]),
+  Z('d12','Borçtan Kurtulma ve Rızık Duası','','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11]),
   Z('d13','Sıkıntı ve Borçtan Kurtulma','','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ',[3]),
   Z('d14','Lâ ilâhe illallahül-Melikül-Hakkul-Mübin','','لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',[100]),
   Z('d15','Yâ Mütekebbir','','يَا مُتَكَبِّرُ',[262]),
@@ -318,10 +590,10 @@ function defaultZikirs(){return [
   Z('d23','Yâ Vedûd','','يَا وَدُودُ',[400])
 ];}
 function defaultState(){return {
-  v:2,zl:5,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
+  v:2,zl:6,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
   totals:{reps:0,done:0},days:{},night:false,
   set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
-       autoReset:true,autoAdvance:true,wake:false}
+       autoReset:true,autoAdvance:true,wake:false,lang:'tr'}
 };}
 var S=load();
 function load(){
@@ -333,13 +605,13 @@ function load(){
       for(var k in d){if(!(k in j))j[k]=d[k];}
       for(var s in d.set){if(!(s in j.set))j.set[s]=d.set[s];}
       if(!Array.isArray(j.zikirs)||!j.zikirs.length)j.zikirs=d.zikirs;
-      if(oldZl===4){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
+      if(oldZl===4||oldZl===5){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
         var dm={};d.zikirs.forEach(function(q){dm[q.id]=q;});
         j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;}});
-        j.zl=5;
-      }else if(oldZl!==5){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
+        j.zl=6;
+      }else if(oldZl!==6){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
         var mine=j.zikirs.filter(function(q){return String(q.id).charAt(0)==='u';});
-        j.zikirs=d.zikirs.concat(mine);j.zl=5;j.active='d1';
+        j.zikirs=d.zikirs.concat(mine);j.zl=6;j.active='d1';
         j.counts={};mine.forEach(function(q){if(j.counts)j.counts[q.id]=0;});j.period={};
       }
       return j;
@@ -416,10 +688,10 @@ function vib(p,force){if((force||S.set.haptic)&&navigator.vibrate){try{navigator
 
 var toastT=null;
 function toast(msg){
-  var t=$('#toast');t.textContent=msg;t.classList.add('show');
+  var t=$('#toast');t.textContent=tr(msg);t.classList.add('show');
   clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2300);
 }
-function confirmBox(msg){return window.confirm(msg);}
+function confirmBox(msg){return window.confirm(tr(msg));}
 
 /* ============ sayım ============ */
 function addCount(z){
@@ -480,6 +752,7 @@ function renderAll(){
   else html=pageSettings();
   v.innerHTML=html;
   if(route==='count')updateSession();
+  applyLang();
 }
 
 /* ============ ANA SAYFA ============ */
@@ -609,6 +882,7 @@ function updateSession(){
   $('#sc-left').textContent=done?'Tamamlandı':'Son '+left+' sayı';
   $('#sc-bar').style.width=Math.min(100,n/mt*100)+'%';
   $('#sc-chain').textContent=S.zikirs.filter(isDone).length+' / '+S.zikirs.length;
+  applyLang($('#cpage'));
 }
 function ripple(x,y){
   var r=document.createElement('span');r.className='rip';r.style.left=x+'px';r.style.top=y+'px';
@@ -632,10 +906,11 @@ function showGoto(z,nx){
   var g=$('#goto');
   g.innerHTML='<div class="card"><div class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Elhamdülillah • Hedefe ulaşıldı</div>'+
    '<div class="t-sm">'+esc(z.name)+' tamamlandı</div>'+
-   '<div class="lab-s">Hemen <b class="acc">'+esc(nx.name)+'</b> başlayacak</div>'+
+   '<div class="lab-s">Sıradaki: <b class="acc">'+esc(nx.name)+'</b></div>'+
    '<div class="tmbar"><i id="tmfill"></i></div>'+
    '<div class="row" style="width:100%;gap:8px"><button class="btn ghost" style="flex:1;border-radius:12px;padding:12px" data-a="gotoCancel">Beklet</button>'+
    '<button class="btn" style="flex:1;border-radius:12px;padding:12px" data-a="gotoNow" data-id="'+nx.id+'">Şimdi Başla '+ic('fwd')+'</button></div></div>';
+  applyLang(g);
   g.classList.add('show');
   var f=$('#tmfill');f.style.width='100%';
   requestAnimationFrame(function(){requestAnimationFrame(function(){f.style.width='0%';});});
@@ -844,6 +1119,7 @@ function pageStats(){
 }
 
 /* ============ AYARLAR ============ */
+function langTile(code,name){var on=lang()===code.toLowerCase();return '<button class="tile'+(on?' on':'')+'" data-a="lang" data-id="'+code.toLowerCase()+'" style="flex-direction:row;justify-content:space-between;padding:10px 12px;width:100%"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s3)">'+code+'</b><span class="lab">'+name+'</span></span>'+(on?ic('checkc','acc'):'')+'</button>';}
 var ACC=[['#38bdf8','Gök Mavisi'],['#2dd4bf','Turkuaz'],['#818cf8','Mor Mavi'],['#34d399','Zümrüt'],['#fbbf24','Kehribar']];
 function sw(id,on){return '<button class="sw'+(on?' on':'')+'" data-a="set" data-id="'+id+'"><i></i></button>';}
 function pageSettings(){
@@ -858,10 +1134,7 @@ function pageSettings(){
      '<button class="tile'+(s.theme==='dark'?' on':'')+'" data-a="themeSet" data-id="dark">'+ic('moon','acc')+'<span class="lab">Gece</span><span class="lab-s">Açık siyah</span></button></div></div>'+
    '<div class="col" style="gap:8px"><div class="row"><span class="lab">Renk Vurgusu</span><span class="lab-s acc">'+(cur?cur[1]:'Özel')+' ('+s.accent+')</span></div>'+
      '<div class="row" style="justify-content:flex-start;gap:10px;flex-wrap:wrap">'+sw1+'<input type="color" id="accPick" value="'+s.accent+'" aria-label="Özel renk"></div></div></div></div>'+
-   '<div class="sec"><h3>'+ic('globe')+' Dil Seçimi (Language)</h3><div class="grp" style="gap:8px">'+
-     '<div class="tile on" style="flex-direction:row;justify-content:space-between;padding:10px 12px"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s3)">TR</b><span class="col" style="text-align:left"><span class="lab">Türkçe</span><span class="lab-s acc">Varsayılan Sistem Dili</span></span></span>'+ic('checkc','acc')+'</div>'+
-     '<div class="tile" style="flex-direction:row;justify-content:space-between;padding:10px 12px;opacity:.55"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s4)">EN</b><span class="lab">English</span></span><span class="lab-s">Yakında</span></div>'+
-     '<div class="tile" style="flex-direction:row;justify-content:space-between;padding:10px 12px;opacity:.55"><span class="row" style="gap:10px"><b class="pill" style="background:var(--s4)">DE</b><span class="lab">Deutsch</span></span><span class="lab-s">Yakında</span></div></div></div>'+
+   '<div class="sec"><h3>'+ic('globe')+' Dil Seçimi (Language)</h3><div class="grp" style="gap:8px">'+langTile('TR','Türkçe')+langTile('EN','English')+langTile('DE','Deutsch')+'</div></div>'+
    '<div class="sec"><h3>'+ic('vib')+' Titreşim & Dokunsal Geri Bildirim</h3><div class="grp">'+
      '<div class="row"><div class="col"><span class="lab">Her Sayımda Hafif Titreşim</span><span class="lab-s">Tesbih tanesi hissi veren mikro haptik</span></div>'+sw('haptic',s.haptic)+'</div>'+
      '<div class="note">'+ic('info','acc')+'<span>Zikir hedefi bitince tek uzun titreşim gelir (bu ayardan bağımsız)</span></div></div></div>'+
@@ -1022,6 +1295,7 @@ document.addEventListener('change',function(e){
 function act(a,id,e,el){
   switch(a){
     case 'theme':S.set.theme=S.set.theme==='dark'?'light':'dark';save();renderAll();break;
+    case 'lang':S.set.lang=id;save();renderAll();break;
     case 'themeSet':S.set.theme=id;save();renderAll();break;
     case 'accent':S.set.accent=id;save();renderAll();break;
     case 'tapType':S.set.tapType=id;save();renderAll();playTap();break;
@@ -1094,7 +1368,7 @@ function act(a,id,e,el){
       break;
     case 'defaults':
       if(confirmBox('Hazır zikir listesi geri yüklensin mi? Eklediğiniz zikirler ve sayaçlar silinir (istatistikler korunur).')){
-        S.zikirs=defaultZikirs();S.zl=5;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
+        S.zikirs=defaultZikirs();S.zl=6;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
       }
       break;
   }
