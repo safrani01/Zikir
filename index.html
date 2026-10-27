@@ -305,6 +305,12 @@ var I18N={
 "Ayarlar":["Settings","Einstellungen"],
 "Tema":["Theme","Design"],
 "Dil":["Language","Sprache"],
+"Kapat":["Close","Schließen"],
+"Yedek almayı unutma":["Don't forget to back up","Denken Sie an die Sicherung"],
+"Verilerin yalnızca bu telefonda saklanıyor. Silinirse geri getirilemez.":["Your data is stored only on this phone. If it is deleted, it cannot be recovered.","Ihre Daten werden nur auf diesem Handy gespeichert. Wenn sie gelöscht werden, lassen sie sich nicht wiederherstellen."],
+"Yedek Al":["Back Up Now","Jetzt sichern"],
+"Yedeği Paylaş (WhatsApp, Drive…)":["Share Backup (WhatsApp, Drive…)","Sicherung teilen (WhatsApp, Drive …)"],
+"Hiç yedek alınmadı":["No backup yet","Noch keine Sicherung"],
 "Dil":["Language","Sprache"],
 "Düzenle":["Edit","Bearbeiten"],
 "Ses":["Sound","Ton"],
@@ -501,6 +507,8 @@ var I18N={
 var GREET={"Sabah Huzuru":["Morning Serenity","Morgenfrieden"],"Öğle Huzuru":["Midday Serenity","Mittagsfrieden"],"İkindi Huzuru":["Afternoon Serenity","Nachmittagsfrieden"],"Akşam Huzuru":["Evening Serenity","Abendfrieden"],"Gece Huzuru":["Night Serenity","Nachtfrieden"]};
 var CNAME={"Gök Mavisi":["Sky Blue","Himmelblau"],"Turkuaz":["Turquoise","Türkis"],"Mor Mavi":["Indigo","Indigo"],"Zümrüt":["Emerald","Smaragd"],"Kehribar":["Amber","Bernstein"],"Özel":["Custom","Benutzerdefiniert"]};
 var IP=[
+ [/^Okunuşu: (.+)$/,function(m,l){return (l?'Umschrift: ':'Transliteration: ')+m[1];}],
+ [/^Son yedek: (.+)$/,function(m,l){return (l?'Letzte Sicherung: ':'Last backup: ')+m[1];}],
  [/^Vakit: (.+)$/,function(m,l){var g=GREET[m[1]];return (l?"Tageszeit: ":"Time of day: ")+(g?g[l]:m[1]);}],
  [/^Tümü \((\d+)\)$/,function(m,l){return (l?"Alle (":"All (")+m[1]+")";}],
  [/^%(\d+) Tamamlandı$/,function(m,l){return l?m[1]+" % abgeschlossen":m[1]+"% complete";}],
@@ -566,6 +574,42 @@ function applyLang(root){
   });
 }
 
+
+/* ============ yedekleme ============ */
+function backupBlob(type){
+  S.lastBackup=Date.now();save();
+  return new Blob([JSON.stringify({app:'zikirmatik',version:2,exported:new Date().toISOString(),state:S},null,1)],{type:type||'application/json'});
+}
+function downloadBlob(blob,name){
+  var u=URL.createObjectURL(blob),an=document.createElement('a');
+  an.href=u;an.download=name;document.body.appendChild(an);an.click();an.remove();
+  setTimeout(function(){URL.revokeObjectURL(u);},4000);
+}
+function backupName(){return 'zikirmatik-yedek-'+dKey(new Date())+'.json';}
+function backupDue(){
+  var hasData=S.totals.reps>=30||S.zikirs.some(function(q){return String(q.id).charAt(0)==='u';});
+  if(!hasData)return false;
+  var now=Date.now(),week=7*86400000;
+  return (now-(S.lastBackup||0)>week)&&now>(S.backupSnooze||0);
+}
+function lastBackupText(){
+  if(!S.lastBackup)return 'Hiç yedek alınmadı';
+  return 'Son yedek: '+new Date(S.lastBackup).toLocaleDateString(LOC[lang()],{day:'numeric',month:'long',year:'numeric'});
+}
+function shareBackup(){
+  try{
+    var name=backupName(),tryTypes=['application/json','text/plain'];
+    for(var i=0;i<tryTypes.length;i++){
+      var f=new File([backupBlob(tryTypes[i])],name,{type:tryTypes[i]});
+      if(navigator.canShare&&navigator.canShare({files:[f]})){
+        navigator.share({files:[f],title:'Zikir Matik'}).then(function(){toast('Yedek dosyası hazırlandı');renderAll();}).catch(function(){renderAll();});
+        return;
+      }
+    }
+    downloadBlob(backupBlob(),name);toast('Yedek dosyası hazırlandı');renderAll();
+  }catch(err){toast('Yedek alınamadı.');}
+}
+
 /* ============ varsayılan zikirler ============ */
 function Z(id,name,sub,arabic,targets,note,group){
   return {id:id,name:name,sub:sub||'',arabic:arabic||'',targets:targets,note:note||'',group:group||'daily',img:'',
@@ -585,8 +629,8 @@ function defaultZikirs(){return [
   Z('d10','Yâ Selâm','','يَا سَلَامُ',[131]),
   Z('d11',"Yâ Vâsi'u",'','يَا وَاسِعُ',[137],
     "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur."),
-  Z('d12','Borçtan Kurtulma ve Rızık Duası','','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11]),
-  Z('d13','Sıkıntı ve Borçtan Kurtulma','','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ',[3]),
+  Z('d12','Borçtan Kurtulma ve Rızık Duası','','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11],'Okunuşu: Allâhümmekfinî bi helâlike an harâmik, ve ağninî bi fadlike ammen sivâk.'),
+  Z('d13','Sıkıntı ve Borçtan Kurtulma','','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ',[3],'Okunuşu: Allâhümme innî eûzü bike minel hemmi vel hazen, ve eûzü bike minel aczi vel keseli, ve eûzü bike minel cübni vel buhl, ve eûzü bike min galebetid-deyni ve kahrir-ricâl.'),
   Z('d14','Lâ ilâhe illallahül-Melikül-Hakkul-Mübin','','لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',[100]),
   Z('d15','Yâ Mütekebbir','','يَا مُتَكَبِّرُ',[262]),
   Z('d16','Yâ Rezzâk','Rızık Kapılarını Açan','يَا رَزَّاقُ',[308]),
@@ -599,7 +643,7 @@ function defaultZikirs(){return [
   Z('d23','Yâ Vedûd','','يَا وَدُودُ',[400])
 ];}
 function defaultState(){return {
-  v:2,zl:7,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
+  v:2,zl:8,lastBackup:0,backupSnooze:0,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
   totals:{reps:0,done:0},days:{},night:false,
   set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
        autoReset:true,autoAdvance:true,wake:false,lang:'tr'}
@@ -614,13 +658,13 @@ function load(){
       for(var k in d){if(!(k in j))j[k]=d[k];}
       for(var s in d.set){if(!(s in j.set))j.set[s]=d.set[s];}
       if(!Array.isArray(j.zikirs)||!j.zikirs.length)j.zikirs=d.zikirs;
-      if(oldZl===4||oldZl===5||oldZl===6){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
+      if(oldZl===4||oldZl===5||oldZl===6||oldZl===7){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
         var dm={};d.zikirs.forEach(function(q){dm[q.id]=q;});
-        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;if(q.id==='d1'||q.id==='d22')q.note=n.note;}});
-        j.zl=7;
-      }else if(oldZl!==7){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
+        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;if(q.id==='d1'||q.id==='d22'||q.id==='d12'||q.id==='d13')q.note=n.note;}});
+        j.zl=8;
+      }else if(oldZl!==8){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
         var mine=j.zikirs.filter(function(q){return String(q.id).charAt(0)==='u';});
-        j.zikirs=d.zikirs.concat(mine);j.zl=7;j.active='d1';
+        j.zikirs=d.zikirs.concat(mine);j.zl=8;j.active='d1';
         j.counts={};mine.forEach(function(q){if(j.counts)j.counts[q.id]=0;});j.period={};
       }
       return j;
@@ -812,6 +856,7 @@ function pageHome(){
    '<div><div class="lab-s">'+ic('checkc')+' Toplam Tamamlanan</div><div class="big" style="color:var(--accent-t)">'+fmt(S.totals.done)+' <span class="lab-s">hedef</span></div></div></div></div>'+
    '<div class="chips">'+chip('all','Tümü ('+cnts.all+')')+chip('daily','Günlük Zikirler')+chip('weekly','Haftalık Zikirler')+chip('unlimited','Süresiz Zikirler')+'</div>'+
    '<div class="note">'+ic('clock','acc')+'<span>'+(S.set.autoReset?'Günlük zikirler saat <b style="color:var(--on)">23:50</b>’de otomatik sıfırlanır.':'Otomatik sıfırlama kapalı (Ayarlar’dan açabilirsiniz).')+'</span></div>'+
+   (backupDue()?'<div class="card" style="display:flex;flex-direction:column;gap:8px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)"><div class="row" style="align-items:flex-start"><div class="col" style="gap:3px"><span class="t-sm">'+ic('down','acc')+' Yedek almayı unutma</span><span class="lab-s" style="font-size:12px;line-height:1.45">Verilerin yalnızca bu telefonda saklanıyor. Silinirse geri getirilemez.</span></div><button class="iconbtn" data-a="snoozeBackup" aria-label="Kapat"><svg class="ic" viewBox="0 0 24 24" style="transform:rotate(45deg)"><use href="#i-plus2"/></svg></button></div><button class="btn" data-a="shareBackup">'+ic('up')+' Yedek Al</button></div>':'')+
    '<div class="note">'+ic('tap','acc')+'<span>Sıralamak için bir zikre basılı tutup sürükleyin.</span></div>'+
    '<div class="col" id="homelist" data-sort="home" style="gap:10px">'+cards+'</div>'+
    '<button class="btn block soft" data-a="resetAll">'+ic('reset')+' Tüm Zikirleri Sıfırla</button>'+
@@ -861,7 +906,7 @@ function pageCount(){
        (z.img?'<img class="thumb" src="'+z.img+'" style="width:56px;height:56px;margin-bottom:4px" alt="">':'')+
        (z.arabic?'<div class="arabic" style="font-size:'+(z.arabic.length>28?'24px':'40px')+';font-weight:700">'+esc(z.arabic)+'</div>':'')+
        (z.sub?'<p class="muted" style="font-size:13px;margin-top:2px">'+esc(z.sub)+'</p>':'')+
-       (z.note?'<p class="muted" style="font-size:12px;margin-top:6px;line-height:1.5">'+esc(z.note)+'</p>':'')+'</div>'+
+       (z.note?(z.note.indexOf('Okunuşu:')===0?'<p style="font-size:15px;margin-top:10px;line-height:1.65;color:var(--on)">'+esc(z.note)+'</p>':'<p class="muted" style="font-size:12px;margin-top:6px;line-height:1.5">'+esc(z.note)+'</p>'):'')+'</div>'+
      '<div class="card flat" style="margin-top:12px;padding:11px">'+
        '<div class="row"><span class="lab">Sıradaki: <b class="acc">'+(nxt.id===z.id?'—':esc(nxt.name))+'</b></span><span class="pill" style="font-size:11px" id="sc-left"></span></div>'+
        '<div class="bar" style="margin-top:8px;height:6px"><i id="sc-bar"></i></div>'+
@@ -1158,7 +1203,9 @@ function pageSettings(){
      '<div class="row"><div class="col"><span class="lab">Hedefe varınca sıradakine geç</span><span class="lab-s">Zikir Çek ekranındaki otomatik geçiş</span></div>'+sw('autoAdvance',s.autoAdvance)+'</div><div class="sep"></div>'+
      '<div class="row"><div class="col"><span class="lab">Ekran açık kalsın</span><span class="lab-s">Zikir Çek ekranındayken ekran kararmasın</span></div>'+sw('wake',s.wake)+'</div><div class="sep"></div>'+
      '<div class="col" style="gap:8px"><div class="col"><span class="lab">Verileri Yedekle & Geri Yükle</span><span class="lab-s">Zikir geçmişinizi JSON dosyası olarak saklayın</span></div>'+
-     '<div class="two"><button class="btn soft" data-a="export" style="border-radius:12px">'+ic('down')+' Dışa Aktar</button><button class="btn soft" data-a="import" style="border-radius:12px">'+ic('up')+' İçe Aktar</button></div></div>'+
+     '<div class="two"><button class="btn soft" data-a="export" style="border-radius:12px">'+ic('down')+' Dışa Aktar</button><button class="btn soft" data-a="import" style="border-radius:12px">'+ic('up')+' İçe Aktar</button></div>'+
+     '<button class="btn soft" data-a="shareBackup" style="border-radius:12px">'+ic('up')+' Yedeği Paylaş (WhatsApp, Drive…)</button>'+
+     '<span class="lab-s">'+lastBackupText()+'</span></div>'+
      '<button class="btn block danger" data-a="wipe" style="padding:13px;font-size:13px">'+ic('trash')+' Tüm İstatistikleri Sıfırla</button>'+
      '<button class="btn block ghost" data-a="defaults" style="padding:13px;font-size:13px">'+ic('reset')+' Hazır Zikir Listesini Geri Yükle</button></div></div>'+
    '<div class="sec"><h3>'+ic('info')+' Uygulama Hakkında</h3><div class="grp" style="align-items:center;text-align:center">'+
@@ -1378,13 +1425,11 @@ function act(a,id,e,el){
       }
       break;}
     case 'export':{
-      try{
-        var blob=new Blob([JSON.stringify({app:'zikirmatik',version:2,exported:new Date().toISOString(),state:S},null,1)],{type:'application/json'});
-        var u=URL.createObjectURL(blob),an=document.createElement('a');
-        an.href=u;an.download='zikirmatik-yedek-'+dKey(new Date())+'.json';document.body.appendChild(an);an.click();an.remove();
-        setTimeout(function(){URL.revokeObjectURL(u);},4000);toast('Yedek dosyası hazırlandı');
-      }catch(err){toast('Yedek alınamadı.');}
+      try{downloadBlob(backupBlob(),backupName());toast('Yedek dosyası hazırlandı');renderAll();}
+      catch(err){toast('Yedek alınamadı.');}
       break;}
+    case 'shareBackup':shareBackup();break;
+    case 'snoozeBackup':S.backupSnooze=Date.now()+3*86400000;save();renderAll();break;
     case 'import':$('#fileImport').click();break;
     case 'wipe':
       if(confirmBox('Tüm istatistikler (günlük kayıtlar, toplamlar, rozetler) silinsin mi? Bu işlem geri alınamaz.')){
@@ -1393,13 +1438,14 @@ function act(a,id,e,el){
       break;
     case 'defaults':
       if(confirmBox('Hazır zikir listesi geri yüklensin mi? Eklediğiniz zikirler ve sayaçlar silinir (istatistikler korunur).')){
-        S.zikirs=defaultZikirs();S.zl=7;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
+        S.zikirs=defaultZikirs();S.zl=8;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
       }
       break;
   }
 }
 
 /* ============ başlat ============ */
+try{if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){});}}catch(e){}
 checkResets();
 if(!location.hash)location.hash='#home';
 renderAll();
