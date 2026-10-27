@@ -478,7 +478,7 @@ var I18N={
 "Şekil ve Suret Veren":["The Fashioner, Who Gives Form","Der Gestalt und Form Gebende"],
 "Borçtan Kurtulma ve Rızık Duası":["Prayer for Relief from Debt and Provision","Gebet um Befreiung von Schulden und um Versorgung"],
 "Sıkıntı ve Borçtan Kurtulma":["Relief from Distress and Debt","Befreiung von Kummer und Schulden"],
-"137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur.":["After reciting Yâ Vâsi'u 137 times, recite: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm”.","Nachdem Yâ Vâsi'u 137-mal gelesen wurde, wird gelesen: „vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm“."],
+"137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeûdühû hıfzuhümâ ve hüvel aliyyül azîm” okunur.":["After reciting Yâ Vâsi'u 137 times, recite: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeûdühû hıfzuhümâ ve hüvel aliyyül azîm”.","Nachdem Yâ Vâsi'u 137-mal gelesen wurde, wird gelesen: „vesia kürsiyyühü's-semâvâti vel arzı velâ yeûdühû hıfzuhümâ ve hüvel aliyyül azîm“."],
 /* toast ve onaylar */
 "Hedef tamamlandı":["Goal completed","Ziel erreicht"],
 "Elhamdülillah, tüm zikirler tamamlandı":["Alhamdulillah, all dhikr completed","Alhamdulillah, alle Zikir abgeschlossen"],
@@ -628,7 +628,7 @@ function defaultZikirs(){return [
   Z('d9','Yâ Kuddûs','','يَا قُدُّوسُ',[174]),
   Z('d10','Yâ Selâm','','يَا سَلَامُ',[131]),
   Z('d11',"Yâ Vâsi'u",'','يَا وَاسِعُ',[137],
-    "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeüdühü hıfzumâ ve hüvel aliyyül azîm” okunur."),
+    "137 defa Yâ Vâsi'u okunup bitince: “vesia kürsiyyühü's-semâvâti vel arzı velâ yeûdühû hıfzuhümâ ve hüvel aliyyül azîm” okunur."),
   Z('d12','Borçtan Kurtulma ve Rızık Duası','','اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',[11],'Okunuşu: Allâhümmekfinî bi helâlike an harâmik, ve ağninî bi fadlike ammen sivâk.'),
   Z('d13','Sıkıntı ve Borçtan Kurtulma','','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ',[3],'Okunuşu: Allâhümme innî eûzü bike minel hemmi vel hazen, ve eûzü bike minel aczi vel keseli, ve eûzü bike minel cübni vel buhl, ve eûzü bike min galebetid-deyni ve kahrir-ricâl.'),
   Z('d14','Lâ ilâhe illallahül-Melikül-Hakkul-Mübin','','لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',[100]),
@@ -643,7 +643,7 @@ function defaultZikirs(){return [
   Z('d23','Yâ Vedûd','','يَا وَدُودُ',[400])
 ];}
 function defaultState(){return {
-  v:2,zl:8,lastBackup:0,backupSnooze:0,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
+  v:2,zl:9,lastBackup:0,backupSnooze:0,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
   totals:{reps:0,done:0},days:{},night:false,
   set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
        autoReset:true,autoAdvance:true,wake:false,lang:'tr'}
@@ -658,13 +658,13 @@ function load(){
       for(var k in d){if(!(k in j))j[k]=d[k];}
       for(var s in d.set){if(!(s in j.set))j.set[s]=d.set[s];}
       if(!Array.isArray(j.zikirs)||!j.zikirs.length)j.zikirs=d.zikirs;
-      if(oldZl===4||oldZl===5||oldZl===6||oldZl===7){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
+      if(oldZl===4||oldZl===5||oldZl===6||oldZl===7||oldZl===8){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
         var dm={};d.zikirs.forEach(function(q){dm[q.id]=q;});
-        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;if(q.id==='d1'||q.id==='d22'||q.id==='d12'||q.id==='d13')q.note=n.note;}});
-        j.zl=8;
-      }else if(oldZl!==8){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
+        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;if(q.id==='d1'||q.id==='d22'||q.id==='d12'||q.id==='d13'||q.id==='d11')q.note=n.note;}});
+        j.zl=9;
+      }else if(oldZl!==9){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
         var mine=j.zikirs.filter(function(q){return String(q.id).charAt(0)==='u';});
-        j.zikirs=d.zikirs.concat(mine);j.zl=8;j.active='d1';
+        j.zikirs=d.zikirs.concat(mine);j.zl=9;j.active='d1';
         j.counts={};mine.forEach(function(q){if(j.counts)j.counts[q.id]=0;});j.period={};
       }
       return j;
@@ -1438,7 +1438,7 @@ function act(a,id,e,el){
       break;
     case 'defaults':
       if(confirmBox('Hazır zikir listesi geri yüklensin mi? Eklediğiniz zikirler ve sayaçlar silinir (istatistikler korunur).')){
-        S.zikirs=defaultZikirs();S.zl=8;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
+        S.zikirs=defaultZikirs();S.zl=9;S.counts={};S.period={};S.active='d1';checkResets();save();renderAll();toast('Liste geri yüklendi');
       }
       break;
   }
