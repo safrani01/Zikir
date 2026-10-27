@@ -49,6 +49,8 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;p
 .brand small{display:block;font:500 10px/1.2 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--var)}
 .hbtn{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;color:var(--var)}
 .hbtn:active{background:var(--s3)}
+.hbtn.lg{flex-direction:column;gap:1px;font:700 9px/1 var(--sans);letter-spacing:.04em}
+.hbtn.lg .ic{width:20px;height:20px}
 main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 main::-webkit-scrollbar{display:none}
 .page{padding:6px 14px 40px;display:flex;flex-direction:column;gap:14px;min-height:100%}
@@ -190,6 +192,11 @@ textarea{resize:none}
 .swatch.on{border-color:var(--on)}
 input[type=range]{width:100%;accent-color:var(--accent)}
 input[type=color]{width:38px;height:38px;border:0;border-radius:50%;padding:0;background:none}
+.langpop{position:fixed;top:calc(env(safe-area-inset-top) + 56px);right:max(12px,calc(50% - 248px));z-index:30;background:var(--s3);border-radius:14px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);min-width:170px;border:1px solid var(--line)}
+.langpop[hidden]{display:none}
+.langpop button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 12px;border-radius:10px;font:600 14px/1.2 var(--sans);text-align:left}
+.langpop button.on{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent-t)}
+.langpop b{display:inline-block;min-width:26px;font:700 11px/1 var(--sans);color:var(--var)}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 84px);transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--s4);color:var(--on);
   padding:10px 16px;border-radius:99px;font:600 12px/1.3 var(--sans);box-shadow:var(--shadow);transition:all .25s;z-index:20;max-width:90%;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -248,6 +255,7 @@ input[type=color]{width:38px;height:38px;border:0;border-radius:50%;padding:0;ba
       <div><b>Zikir Matik</b><small id="hsub">Huzur &amp; Zikir</small></div>
     </div>
     <div class="row" style="gap:2px">
+      <button class="hbtn lg" data-a="langMenu" aria-label="Dil"><svg class="ic" viewBox="0 0 24 24"><use href="#i-globe"/></svg><span id="langCode">TR</span></button>
       <button class="hbtn" data-a="theme" aria-label="Tema"><svg class="ic" id="themeIc" viewBox="0 0 24 24"><use href="#i-moon"/></svg></button>
       <a class="hbtn" href="#settings" aria-label="Ayarlar"><svg class="ic" viewBox="0 0 24 24"><use href="#i-gear"/></svg></a>
     </div>
@@ -261,6 +269,7 @@ input[type=color]{width:38px;height:38px;border:0;border-radius:50%;padding:0;ba
     <a href="#settings" data-r="settings"><svg class="ic" viewBox="0 0 24 24"><use href="#i-gear"/></svg>Ayarlar</a>
   </nav>
 </div>
+<div class="langpop" id="langpop" hidden></div>
 <div class="toast" id="toast"></div>
 <div class="goto" id="goto"></div>
 <input type="file" id="fileImg" accept="image/*" hidden>
@@ -295,6 +304,8 @@ var I18N={
 "İstatistik":["Stats","Statistik"],
 "Ayarlar":["Settings","Einstellungen"],
 "Tema":["Theme","Design"],
+"Dil":["Language","Sprache"],
+"Dil":["Language","Sprache"],
 "Düzenle":["Edit","Bearbeiten"],
 "Ses":["Sound","Ton"],
 "Özel renk":["Custom color","Eigene Farbe"],
@@ -732,6 +743,7 @@ function applyTheme(){
   if(c.length===6){lum=(parseInt(c.substr(0,2),16)*299+parseInt(c.substr(2,2),16)*587+parseInt(c.substr(4,2),16)*114)/1000;}
   r.style.setProperty('--on-accent',lum>150?'#062230':'#ffffff');
   var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',S.set.theme==='dark'?'#0c1516':'#f2f8fa');
+  var lc=$('#langCode');if(lc)lc.textContent=lang().toUpperCase();
   $('#themeIc').innerHTML='<use href="#i-'+(S.set.theme==='dark'?'moon':'sun')+'"/>';
 }
 
@@ -1254,7 +1266,20 @@ document.addEventListener('touchmove',function(e){if(SORT&&SORT.on)e.preventDefa
 document.addEventListener('contextmenu',function(e){if(SORT)e.preventDefault();});
 document.addEventListener('click',function(e){if(Date.now()<sortSuppress){e.stopPropagation();e.preventDefault();}},true);
 
+function langPopHtml(){
+  return [['tr','TR','Türkçe'],['en','EN','English'],['de','DE','Deutsch']].map(function(x){
+    var on=lang()===x[0];
+    return '<button class="'+(on?'on':'')+'" data-a="lang" data-id="'+x[0]+'"><span class="row" style="gap:8px"><b>'+x[1]+'</b>'+x[2]+'</span>'+(on?ic('check'):'')+'</button>';
+  }).join('');
+}
 document.addEventListener('click',function(e){
+  var pp=$('#langpop');
+  if(pp&&!pp.hidden){
+    var inside=e.target.closest('#langpop');
+    pp.hidden=true;
+    if(!inside&&!e.target.closest('[data-a=langMenu]')){return;}   // dışarı tıklama yalnızca menüyü kapatır
+    if(!inside&&e.target.closest('[data-a=langMenu]')){return;}    // simgeye tekrar basınca kapanır
+  }
   var t=e.target.closest('[data-a]');
   if(t){act(t.getAttribute('data-a'),t.getAttribute('data-id'),e,t);return;}
   if(route==='count'&&!e.target.closest('button,a,input,label,textarea,.chain,#goto,nav,header')){onCountTap(e);}
@@ -1293,6 +1318,8 @@ document.addEventListener('change',function(e){
 function act(a,id,e,el){
   switch(a){
     case 'theme':S.set.theme=S.set.theme==='dark'?'light':'dark';save();renderAll();break;
+    case 'langCycle':{var LS=['tr','en','de'],LN={tr:'Türkçe',en:'English',de:'Deutsch'};var nl=LS[(LS.indexOf(lang())+1)%3];S.set.lang=nl;save();renderAll();toast(LN[nl]);break;}
+    case 'langMenu':{var pp=$('#langpop');pp.innerHTML=langPopHtml();pp.hidden=false;break;}
     case 'lang':S.set.lang=id;save();renderAll();break;
     case 'themeSet':S.set.theme=id;save();renderAll();break;
     case 'accent':S.set.accent=id;save();renderAll();break;
