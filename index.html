@@ -513,6 +513,7 @@ var I18N={
 var GREET={"Sabah Huzuru":["Morning Serenity","Morgenfrieden"],"Öğle Huzuru":["Midday Serenity","Mittagsfrieden"],"İkindi Huzuru":["Afternoon Serenity","Nachmittagsfrieden"],"Akşam Huzuru":["Evening Serenity","Abendfrieden"],"Gece Huzuru":["Night Serenity","Nachtfrieden"]};
 var CNAME={"Gök Mavisi":["Sky Blue","Himmelblau"],"Turkuaz":["Turquoise","Türkis"],"Mor Mavi":["Indigo","Indigo"],"Zümrüt":["Emerald","Smaragd"],"Kehribar":["Amber","Bernstein"],"Özel":["Custom","Benutzerdefiniert"]};
 var IP=[
+ [/^Tamamlananlar \((\d+)\)$/,function(m,l){return (l?'Abgeschlossen (':'Completed (')+m[1]+')';}],
  [/^Okunuşu: (.+)$/,function(m,l){return (l?'Umschrift: ':'Transliteration: ')+m[1];}],
  [/^Son yedek: (.+)$/,function(m,l){return (l?'Letzte Sicherung: ':'Last backup: ')+m[1];}],
  [/^Vakit: (.+)$/,function(m,l){var g=GREET[m[1]];return (l?"Tageszeit: ":"Time of day: ")+(g?g[l]:m[1]);}],
@@ -779,6 +780,7 @@ function addCount(z){
 }
 
 /* ============ yönlendirme ============ */
+var homeDoneOpen=false,chainDoneOpen=false;
 var route='home',editId=null,statsRange='week',filter='all',chainEdit=false,pendImg=null,cdTimer=null;
 function go(r){
   if(location.hash==='#'+r){renderAll();}else{location.hash='#'+r;}
@@ -852,10 +854,15 @@ function zcard(z){
     '<div class="row"><button class="btn ghost" data-a="reset1" data-id="'+z.id+'" style="padding:8px 13px;font-size:12px">'+ic('reset')+' Sıfırla</button>'+
     '<button class="btn '+act[2]+'" data-a="'+act[3]+'" data-id="'+z.id+'">'+ic(actIc)+' '+act[1]+'</button></div></div>';
 }
+function doneToggle(act,n,open){
+  return '<button class="card flat row" data-a="'+act+'" style="width:100%;padding:12px 14px"><span class="row t-sm" style="gap:8px;font-size:15px">'+ic('checkc','acc')+' Tamamlananlar ('+n+')</span><svg class="ic" viewBox="0 0 24 24" style="transform:rotate('+(open?'90':'0')+'deg);transition:transform .2s"><use href="#i-chev"/></svg></button>';
+}
 function pageHome(){
   var td=today();
   var list=S.zikirs.filter(function(z){return filter==='all'||z.group===filter;});
-  var cards=list.length?list.map(zcard).join(''):'<div class="empty">Bu grupta zikir yok.<br>Aşağıdan yeni bir zikir ekleyebilirsiniz.</div>';
+  var actL=list.filter(function(z){return !isDone(z);}),doneL=list.filter(isDone);
+  var cards=actL.length?actL.map(zcard).join(''):(doneL.length?'<div class="empty">Elhamdülillah, tüm zikirler tamamlandı</div>':'<div class="empty">Bu grupta zikir yok.<br>Aşağıdan yeni bir zikir ekleyebilirsiniz.</div>');
+  var doneHtml=doneL.length?doneToggle('toggleDoneHome',doneL.length,homeDoneOpen)+(homeDoneOpen?'<div class="col" style="gap:10px">'+doneL.map(zcard).join('')+'</div>':''):'';
   var cnts={all:S.zikirs.length};
   ['daily','weekly','unlimited'].forEach(function(g){cnts[g]=S.zikirs.filter(function(z){return z.group===g;}).length;});
   function chip(k,l){return '<button class="chip'+(filter===k?' on':'')+'" data-a="filter" data-id="'+k+'">'+l+'</button>';}
@@ -869,7 +876,7 @@ function pageHome(){
    '<div class="note">'+ic('clock','acc')+'<span>'+(S.set.autoReset?'Günlük zikirler saat <b style="color:var(--on)">23:50</b>’de otomatik sıfırlanır.':'Otomatik sıfırlama kapalı (Ayarlar’dan açabilirsiniz).')+'</span></div>'+
    (backupDue()?'<div class="card" style="display:flex;flex-direction:column;gap:8px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)"><div class="row" style="align-items:flex-start"><div class="col" style="gap:3px"><span class="t-sm">'+ic('down','acc')+' Yedek almayı unutma</span><span class="lab-s" style="font-size:12px;line-height:1.45">Verilerin yalnızca bu telefonda saklanıyor. Silinirse geri getirilemez.</span></div><button class="iconbtn" data-a="snoozeBackup" aria-label="Kapat"><svg class="ic" viewBox="0 0 24 24" style="transform:rotate(45deg)"><use href="#i-plus2"/></svg></button></div><button class="btn" data-a="shareBackup">'+ic('up')+' Yedek Al</button></div>':'')+
    '<div class="note">'+ic('tap','acc')+'<span>Sıralamak için bir zikre basılı tutup sürükleyin.</span></div>'+
-   '<div class="col" id="homelist" data-sort="home" style="gap:10px">'+cards+'</div>'+
+   '<div class="col" id="homelist" data-sort="home" style="gap:10px">'+cards+'</div>'+doneHtml+
    '<button class="btn block soft" data-a="resetAll">'+ic('reset')+' Tüm Zikirleri Sıfırla</button>'+
    '<p class="lab-s" style="text-align:center">Sayaçlar yalnızca bu cihazda saklanır.</p>'+
    '<div style="height:56px"></div></div>'+
@@ -887,14 +894,17 @@ function pageCount(){
   var z=active(),idx=S.zikirs.indexOf(z),doneN=S.zikirs.filter(isDone).length;
   var nxt=S.zikirs[(idx+1)%S.zikirs.length];
   var circ=2*Math.PI*96;
-  var chain=S.zikirs.map(function(q,i){
+  var chainAll=S.zikirs.map(function(q,i){
     var cur=q.id===z.id,dn=isDone(q);
-    return '<div class="row" data-sid="'+q.id+'" style="gap:6px"><button class="ci'+(cur?' cur':'')+(dn&&!cur?' dn':'')+'" data-a="pick" data-id="'+q.id+'">'+
+    return {done:dn&&!cur,html:'<div class="row" data-sid="'+q.id+'" style="gap:6px"><button class="ci'+(cur?' cur':'')+(dn&&!cur?' dn':'')+'" data-a="pick" data-id="'+q.id+'">'+
      '<div class="row" style="gap:10px;min-width:0"><span class="num">'+(dn&&!cur?ic('check'):(i+1))+'</span>'+
      '<div class="col" style="min-width:0"><span class="lab" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'+(cur?'color:var(--accent-t)':'')+'">'+esc(q.name)+(cur?' <span class="pill" style="padding:1px 7px;font-size:10px;background:color-mix(in srgb,var(--accent) 22%,transparent)">Şu Anki</span>':'')+'</span>'+
      '<span class="lab-s">'+cnt(q)+' / '+maxT(q)+(dn?' Tamamlandı':cur?' Devam Ediyor':' • Sırada')+'</span></div></div></button>'+
-     (chainEdit?'<div class="row" style="gap:0"><button class="iconbtn" data-a="mvup" data-id="'+q.id+'">'+ic('up2')+'</button><button class="iconbtn" data-a="mvdn" data-id="'+q.id+'">'+ic('dn2')+'</button></div>':'')+'</div>';
-  }).join('');
+     (chainEdit?'<div class="row" style="gap:0"><button class="iconbtn" data-a="mvup" data-id="'+q.id+'">'+ic('up2')+'</button><button class="iconbtn" data-a="mvdn" data-id="'+q.id+'">'+ic('dn2')+'</button></div>':'')+'</div>'};
+  });
+  var chain=chainAll.filter(function(x){return !x.done;}).map(function(x){return x.html;}).join('');
+  var chainDone=chainAll.filter(function(x){return x.done;});
+  var chainDoneHtml=chainDone.length?doneToggle('toggleDoneChain',chainDone.length,chainDoneOpen)+(chainDoneOpen?'<div class="chain" style="margin-top:2px">'+chainDone.map(function(x){return x.html;}).join('')+'</div>':''):'';
   return '<div class="page" id="cpage">'+
    '<div class="row"><div class="row lab" style="gap:7px;font-size:17px;font-family:var(--sans);font-weight:600">'+ic('tap','acc')+' Zikir Çek</div>'+
    '<span class="pill" style="background:var(--s3)">● Zincir: <span id="sc-chain">'+doneN+' / '+S.zikirs.length+'</span></span></div>'+
@@ -929,7 +939,7 @@ function pageCount(){
        '<button class="btn" data-a="next" style="border-radius:12px;padding:12px">Sıradaki '+ic('fwd')+'</button></div></div>'+
    '<div class="col" style="gap:8px"><div class="row"><span class="row t-sm" style="gap:7px">'+ic('repeat','acc')+' Günlük Zincir Akışı</span>'+
      '<button class="lab acc" data-a="chainEdit">'+(chainEdit?'Bitti':'Sırayı Düzenle')+'</button></div>'+
-     '<span class="lab-s">Sıralamak için bir zikre basılı tutup sürükleyin.</span><div class="chain" data-sort="chain">'+chain+'</div></div>'+
+     '<span class="lab-s">Sıralamak için bir zikre basılı tutup sürükleyin.</span><div class="chain" data-sort="chain">'+chain+'</div>'+chainDoneHtml+'</div>'+
    '</div>';
 }
 function updateSession(){
@@ -1381,6 +1391,8 @@ function act(a,id,e,el){
     case 'theme':S.set.theme=S.set.theme==='dark'?'light':'dark';save();renderAll();break;
     case 'langCycle':{var LS=['tr','en','de'],LN={tr:'Türkçe',en:'English',de:'Deutsch'};var nl=LS[(LS.indexOf(lang())+1)%3];S.set.lang=nl;save();renderAll();toast(LN[nl]);break;}
     case 'langMenu':{var pp=$('#langpop');pp.innerHTML=langPopHtml();pp.hidden=false;break;}
+    case 'toggleDoneHome':homeDoneOpen=!homeDoneOpen;renderAll();break;
+    case 'toggleDoneChain':chainDoneOpen=!chainDoneOpen;renderAll();break;
     case 'lang':S.set.lang=id;save();renderAll();break;
     case 'vibStrength':S.set.vibStrength=id;save();renderAll();vib(endVib(true),true);break;
     case 'vibTest':vib(endVib(true),true);if(!navigator.vibrate)toast('Bu cihaz titreşimi desteklemiyor.');break;
