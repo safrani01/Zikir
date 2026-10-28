@@ -442,7 +442,13 @@ var I18N={
 "Titreşim & Dokunsal Geri Bildirim":["Vibration & Haptic Feedback","Vibration & haptisches Feedback"],
 "Her Sayımda Hafif Titreşim":["Light Vibration on Every Count","Leichte Vibration bei jeder Zählung"],
 "Tesbih tanesi hissi veren mikro haptik":["Micro-haptics that feel like prayer beads","Mikro-Haptik, die sich wie Gebetsperlen anfühlt"],
-"Zikir hedefi bitince tek uzun titreşim gelir (bu ayardan bağımsız)":["One long vibration when the goal is reached (independent of this setting)","Eine lange Vibration, wenn das Ziel erreicht ist (unabhängig von dieser Einstellung)"],
+"Zikir hedefi bitince titreşim gelir (bu ayardan bağımsız)":["A vibration is given when the goal is reached (independent of this setting)","Beim Erreichen des Ziels vibriert das Gerät (unabhängig von dieser Einstellung)"],
+"Bitiş Titreşimi Gücü":["Goal Vibration Strength","Stärke der Ziel-Vibration"],
+"Hedef bitince gelen titreşimin gücü":["How strong the vibration is when the goal is reached","Wie stark die Vibration beim Erreichen des Ziels ist"],
+"Normal":["Normal","Normal"],
+"Güçlü":["Strong","Stark"],
+"Titreşimi Dene":["Try Vibration","Vibration testen"],
+"Bu cihaz titreşimi desteklemiyor.":["This device does not support vibration.","Dieses Gerät unterstützt keine Vibration."],
 "Ses ve Efektler":["Sound & Effects","Ton & Effekte"],
 "Ses (genel)":["Sound (master)","Ton (allgemein)"],
 "Kapalıyken hiçbir ses çalmaz":["No sound plays when off","Wenn ausgeschaltet, wird kein Ton abgespielt"],
@@ -646,7 +652,7 @@ function defaultState(){return {
   v:2,zl:9,lastBackup:0,backupSnooze:0,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
   totals:{reps:0,done:0},days:{},night:false,
   set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
-       autoReset:true,autoAdvance:true,wake:false,lang:'tr'}
+       autoReset:true,autoAdvance:true,wake:false,vibStrength:'strong',lang:'tr'}
 };}
 var S=load();
 function load(){
@@ -737,6 +743,11 @@ function playDone(type,force){
   else if(type==='drop'){tone(900,350,.18,'sine',1);tone(900,350,.18,'sine',1,.2);tone(1100,420,.25,'sine',1,.4);}
   else if(type==='bell'){tone(880,880,.9,'sine',1);tone(1320,1320,.7,'sine',.5);}
 }
+function endVib(final){
+  var strong=S.set.vibStrength!=='normal';
+  if(final)return strong?[500,120,500,120,500]:[800];
+  return strong?[350,100,350,100,350]:[300,100,300];
+}
 function vib(p,force){if((force||S.set.haptic)&&navigator.vibrate){try{navigator.vibrate(p);}catch(e){}}}
 
 var toastT=null;
@@ -757,7 +768,7 @@ function addCount(z){
   var hit=z.targets.indexOf(n)>=0;
   if(hit){
     S.totals.done++;d.c++;
-    vib(n>=maxT(z)?[800]:[300,100,300],true);   // son zikir: tek uzun titreşim; ara hedef: iki orta
+    vib(endVib(n>=maxT(z)),true);
     playDone(z.sound.on?z.sound.type:'vibrate');
   }else{
     vib(22);
@@ -1192,7 +1203,10 @@ function pageSettings(){
    '<div class="sec"><h3>'+ic('globe')+' Dil Seçimi (Language)</h3><div class="grp" style="gap:8px">'+langTile('TR','Türkçe')+langTile('EN','English')+langTile('DE','Deutsch')+'</div></div>'+
    '<div class="sec"><h3>'+ic('vib')+' Titreşim & Dokunsal Geri Bildirim</h3><div class="grp">'+
      '<div class="row"><div class="col"><span class="lab">Her Sayımda Hafif Titreşim</span><span class="lab-s">Tesbih tanesi hissi veren mikro haptik</span></div>'+sw('haptic',s.haptic)+'</div>'+
-     '<div class="note">'+ic('info','acc')+'<span>Zikir hedefi bitince tek uzun titreşim gelir (bu ayardan bağımsız)</span></div></div></div>'+
+     '<div class="sep"></div><div class="col" style="gap:8px"><div class="col"><span class="lab">Bitiş Titreşimi Gücü</span><span class="lab-s">Hedef bitince gelen titreşimin gücü</span></div>'+
+     '<div class="seg"><button class="'+(s.vibStrength==='normal'?'on':'')+'" data-a="vibStrength" data-id="normal">Normal</button><button class="'+(s.vibStrength!=='normal'?'on':'')+'" data-a="vibStrength" data-id="strong">Güçlü</button></div>'+
+     '<button class="btn soft" data-a="vibTest" style="border-radius:12px">'+ic('vib')+' Titreşimi Dene</button></div>'+
+     '<div class="note">'+ic('info','acc')+'<span>Zikir hedefi bitince titreşim gelir (bu ayardan bağımsız)</span></div></div></div>'+
    '<div class="sec"><h3>'+ic('vol')+' Ses ve Efektler</h3><div class="grp">'+
      '<div class="row"><div class="col"><span class="lab">Ses (genel)</span><span class="lab-s">Kapalıyken hiçbir ses çalmaz</span></div>'+sw('sound',s.sound)+'</div><div class="sep"></div>'+
      '<div class="row"><div class="col"><span class="lab">Tamamlama Sesi</span><span class="lab-s">Hedef sonunda tebrik sesi</span></div>'+sw('doneSound',s.doneSound)+'</div>'+
@@ -1368,6 +1382,8 @@ function act(a,id,e,el){
     case 'langCycle':{var LS=['tr','en','de'],LN={tr:'Türkçe',en:'English',de:'Deutsch'};var nl=LS[(LS.indexOf(lang())+1)%3];S.set.lang=nl;save();renderAll();toast(LN[nl]);break;}
     case 'langMenu':{var pp=$('#langpop');pp.innerHTML=langPopHtml();pp.hidden=false;break;}
     case 'lang':S.set.lang=id;save();renderAll();break;
+    case 'vibStrength':S.set.vibStrength=id;save();renderAll();vib(endVib(true),true);break;
+    case 'vibTest':vib(endVib(true),true);if(!navigator.vibrate)toast('Bu cihaz titreşimi desteklemiyor.');break;
     case 'themeSet':S.set.theme=id;save();renderAll();break;
     case 'accent':S.set.accent=id;save();renderAll();break;
     case 'tapType':S.set.tapType=id;save();renderAll();playTap();break;
