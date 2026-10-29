@@ -746,8 +746,8 @@ function playDone(type,force){
 }
 function endVib(final){
   var strong=S.set.vibStrength!=='normal';
-  if(final)return strong?[500,120,500,120,500]:[800];
-  return strong?[350,100,350,100,350]:[300,100,300];
+  if(final)return strong?[600,150,600]:[800];
+  return strong?[350,100,350]:[300,100,300];
 }
 function vib(p,force){if((force||S.set.haptic)&&navigator.vibrate){try{navigator.vibrate(p);}catch(e){}}}
 
@@ -1353,6 +1353,7 @@ document.addEventListener('click',function(e){
   }
   var t=e.target.closest('[data-a]');
   if(t){act(t.getAttribute('data-a'),t.getAttribute('data-id'),e,t);return;}
+  if(route==='home'){var zc=e.target.closest('.zc');if(zc&&!e.target.closest('button,a,input,label,textarea')){var zid=zc.getAttribute('data-sid'),zz=byId(zid);if(zz&&!isDone(zz)){act('open',zid,e,zc);return;}}}
   if(route==='count'&&!e.target.closest('button,a,input,label,textarea,.chain,#goto,nav,header')){onCountTap(e);}
 });
 document.addEventListener('input',function(e){
