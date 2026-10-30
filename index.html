@@ -423,6 +423,7 @@ var I18N={
 "İlk 100 zikir":["First 100 dhikr","Die ersten 100 Zikir"],
 "7 Gün Serisi":["7-Day Streak","7-Tage-Serie"],
 "Kesintisiz 1 hafta":["One week without a break","Eine Woche ohne Pause"],
+"Kesintisiz 1 yıl":["One year without a break","Ein Jahr ohne Pause"],
 "Gece Kuşu":["Night Owl","Nachteule"],
 "23:00 sonrası tefekkür":["Reflection after 23:00","Besinnung nach 23:00 Uhr"],
 "Gece zikri çek":["Do a night dhikr","Nachts Zikir machen"],
@@ -535,7 +536,12 @@ var IP=[
    return l?p+": "+m[2]+" Wdh.":p+" total volume: "+m[2]+" reps";}],
  [/^(.+) tekrar$/,function(m,l){return m[1]+(l?" Wdh.":" reps");}],
  [/^(\d+) Aktif Zikir$/,function(m,l){return l?m[1]+" aktive Zikir":m[1]+" active dhikr";}],
- [/^(\d+) \/ 4 Açıldı$/,function(m,l){return m[1]+(l?" / 4 freigeschaltet":" / 4 unlocked");}],
+ [/^(\d+) \/ (\d+) Açıldı$/,function(m,l){return m[1]+" / "+m[2]+(l?" freigeschaltet":" unlocked");}],
+ [/^([\d.]+) Kulübü$/,function(m,l){return l?m[1]+"er-Club":m[1]+" Club";}],
+ [/^([\d.]+) sınırını aşma$/,function(m,l){return l?"Die "+m[1]+"-Marke überschreiten":"Pass the "+m[1]+" mark";}],
+ [/^(\d+) Gün Serisi$/,function(m,l){return l?m[1]+"-Tage-Serie":m[1]+"-Day Streak";}],
+ [/^Kesintisiz (\d+) gün$/,function(m,l){return l?m[1]+" Tage ohne Pause":m[1]+" days without a break";}],
+ [/^(\d+) \/ (\d+) gün$/,function(m,l){return m[1]+" / "+m[2]+(l?" Tage":" days");}],
  [/^(\d+) \/ (\d+) gün$/,function(m,l){return m[1]+" / "+m[2]+(l?" Tage":" days");}],
  [/^(.+) tamamlandı$/,function(m,l){return m[1]+(l?" abgeschlossen":" completed");}],
  [/^(.+) \((#[0-9a-fA-F]{6})\)$/,function(m,l){var c=CNAME[m[1]];return (c?c[l]:m[1])+" ("+m[2]+")";}],
@@ -1177,8 +1183,17 @@ function pageStats(){
   var st=streak();
   function badge(ic1,t,d,ok,prog){return '<div class="'+(ok?'':'lock')+'"><span class="bi">'+ic(ic1)+'</span><b class="t-sm" style="font-size:15px">'+t+'</b><span class="lab-s">'+d+'</span>'+
     '<span class="pill" style="font-size:11px;background:'+(ok?'color-mix(in srgb,var(--accent) 16%,transparent)':'var(--s4)')+';color:'+(ok?'var(--accent-t)':'var(--var)')+'">'+(ok?ic('check')+' Kazanıldı':ic('lock')+' '+prog)+'</span></div>';}
-  var b1=S.totals.reps>=100,b2=st>=7,b3=!!S.night,b4=S.totals.reps>=10000;
-  var nb=[b1,b2,b3,b4].filter(Boolean).length;
+  if(st>(S.best||0)){S.best=st;save();}
+  var best=S.best||0,tl=function(n){return n.toLocaleString('tr-TR');};
+  var BL=[];
+  [100,1000,10000,50000,100000,500000,1000000].forEach(function(n){
+    BL.push({ic:'star',t:n===100?'İlk Adım':tl(n)+' Kulübü',d:n===100?'İlk 100 zikir':tl(n)+' sınırını aşma',ok:S.totals.reps>=n,p:fmt(Math.min(S.totals.reps,n))+' / '+fmt(n)});
+  });
+  [[7,'Kesintisiz 1 hafta'],[30,'Kesintisiz 30 gün'],[100,'Kesintisiz 100 gün'],[365,'Kesintisiz 1 yıl']].forEach(function(a){
+    BL.push({ic:'cal',t:a[0]+' Gün Serisi',d:a[1],ok:best>=a[0],p:Math.min(best,a[0])+' / '+a[0]+' gün'});
+  });
+  BL.push({ic:'moon',t:'Gece Kuşu',d:'23:00 sonrası tefekkür',ok:!!S.night,p:'Gece zikri çek'});
+  var nb=BL.filter(function(b){return b.ok;}).length;
   function sg(k,l){return '<button class="'+(statsRange===k?'on':'')+'" data-a="range" data-id="'+k+'">'+l+'</button>';}
   return '<div class="page">'+
    '<div class="row"><div class="col"><span class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">● Huzur Analitiği</span><h1 class="t-lg acc">İstatistikler</h1></div></div>'+
@@ -1192,11 +1207,8 @@ function pageStats(){
    (delta!==null?'<span class="pill" style="background:color-mix(in srgb,var(--accent) 18%,transparent)">'+ic('trend')+' '+(delta>=0?'+':'')+delta+'%</span>':'')+'</div>'+
    '<div class="chart">'+bars+'</div></div>'+
    '<div class="col" style="gap:8px"><div class="row"><span class="t-sm">Zikir Performansı & Dağılımı</span><span class="lab-s">'+ids.length+' Aktif Zikir</span></div>'+perf+'</div>'+
-   '<div class="col" style="gap:8px"><div class="row"><span class="row t-sm" style="gap:6px">'+ic('star','acc')+' Kazanılan Başarılar</span><span class="lab-s acc">'+nb+' / 4 Açıldı</span></div>'+
-   '<div class="badges">'+badge('star','İlk Adım','İlk 100 zikir',b1,fmt(Math.min(S.totals.reps,100))+' / 100')+
-   badge('cal','7 Gün Serisi','Kesintisiz 1 hafta',b2,Math.min(st,7)+' / 7 gün')+
-   badge('moon','Gece Kuşu','23:00 sonrası tefekkür',b3,'Gece zikri çek')+
-   badge('lock','10.000 Kulübü','10.000 sınırını aşma',b4,fmt(Math.min(S.totals.reps,10000))+' / 10.000')+'</div></div>'+
+   '<div class="col" style="gap:8px"><div class="row"><span class="row t-sm" style="gap:6px">'+ic('star','acc')+' Kazanılan Başarılar</span><span class="lab-s acc">'+nb+' / '+BL.length+' Açıldı</span></div>'+
+   '<div class="badges">'+BL.map(function(b){return badge(b.ic,b.t,b.d,b.ok,b.p);}).join('')+'</div></div>'+
    '<div class="note" style="padding:12px">'+ic('clock','acc')+'<span>Günlük veriler her gece 23:50’de arşivlenir; sayaçlar sıfırlanır, istatistikler korunur.</span></div></div>';
 }
 
@@ -1468,7 +1480,7 @@ function act(a,id,e,el){
     case 'import':$('#fileImport').click();break;
     case 'wipe':
       if(confirmBox('Tüm istatistikler (günlük kayıtlar, toplamlar, rozetler) silinsin mi? Bu işlem geri alınamaz.')){
-        S.days={};S.totals={reps:0,done:0};S.night=false;S.zikirs.forEach(function(q){S.counts[q.id]=0;});save();renderAll();toast('İstatistikler sıfırlandı');
+        S.days={};S.totals={reps:0,done:0};S.night=false;S.best=0;S.zikirs.forEach(function(q){S.counts[q.id]=0;});save();renderAll();toast('İstatistikler sıfırlandı');
       }
       break;
     case 'defaults':
