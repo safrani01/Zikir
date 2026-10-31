@@ -624,13 +624,13 @@ function shareBackup(){
 }
 
 /* ============ varsayılan zikirler ============ */
-function Z(id,name,sub,arabic,targets,note,group){
-  return {id:id,name:name,sub:sub||'',arabic:arabic||'',targets:targets,note:note||'',group:group||'daily',img:'',
+function Z(id,name,sub,arabic,targets,note,group,hd){
+  return {id:id,name:name,sub:sub||'',hd:hd||'',arabic:arabic||'',targets:targets,note:note||'',group:group||'daily',img:'',
           sound:{on:true,type:'ney'},warn2:true};
 }
 function defaultZikirs(){return [
   Z('d1','Rabbişrahli Sadri Duası','','رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي',[20],
-    'Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli.'),
+    '','daily','Rabbişrahli sadri ve yessirli emri. Vahlül ukdeten minlisani yefkahu kavli.'),
   Z('d3','Yâ Rahmân','Dünyada Merhamet Eden','يَا رَحْمَنُ',[298]),
   Z('d4','Yâ Rahîm','Ahirette Merhamet Eden','يَا رَحِيمُ',[258]),
   Z('d5','Yâ Melik (90)','Mülkün Gerçek Sahibi','يَا مَلِكُ',[90]),
@@ -658,10 +658,10 @@ function defaultZikirs(){return [
   Z('w2','Lâ ilâhe illâ ente sübhâneke innî küntü minez-zâlimîn','','لَا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ',[100],'','weekly'),
   Z('w3','Rabbi Zidnî İlmen','','رَبِّ زِدْنِي عِلْمًا',[100],'','weekly'),
   Z('w4','Estağfirullah','','أَسْتَغْفِرُ اللّٰهَ',[100],'','weekly'),
-  Z('w5','Yâ Mukallibel Kulûb','Ey kalpleri halden hale çeviren Allah’ım! Benim kalbimi dinin üzere sabit kıl.','يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَىٰ دِينِكَ',[100],'Okunuşu: Yâ mukallibel kulûb! Sebbît kalbî alâ dînik.','weekly')
+  Z('w5','Yâ Mukallibel Kulûb','Ey kalpleri halden hale çeviren Allah’ım! Benim kalbimi dinin üzere sabit kıl.','يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَىٰ دِينِكَ',[100],'','weekly','Yâ mukallibel kulûb! Sebbît kalbî alâ dînik.')
 ];}
 function defaultState(){return {
-  v:2,zl:11,lastBackup:0,backupSnooze:0,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
+  v:2,zl:12,lastBackup:0,backupSnooze:0,zikirs:defaultZikirs(),counts:{},period:{},active:'d1',
   totals:{reps:0,done:0},days:{},night:false,
   set:{theme:'dark',accent:'#38bdf8',sound:true,haptic:true,warn2:true,doneSound:true,volume:80,tapType:'ney',
        autoReset:true,autoAdvance:true,wake:false,vibStrength:'strong',lang:'tr'}
@@ -676,14 +676,14 @@ function load(){
       for(var k in d){if(!(k in j))j[k]=d[k];}
       for(var s in d.set){if(!(s in j.set))j.set[s]=d.set[s];}
       if(!Array.isArray(j.zikirs)||!j.zikirs.length)j.zikirs=d.zikirs;
-      if(oldZl===4||oldZl===5||oldZl===6||oldZl===7||oldZl===8||oldZl===9||oldZl===10){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
+      if(oldZl===4||oldZl===5||oldZl===6||oldZl===7||oldZl===8||oldZl===9||oldZl===10||oldZl===11){ // yalnızca başlık/alt başlık güncellemesi: sıra, sayaç ve ayarlar korunur
         var dm={};d.zikirs.forEach(function(q){dm[q.id]=q;});
-        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;if(q.id==='w1')q.arabic=n.arabic;if(q.id==='d1'||q.id==='d22'||q.id==='d12'||q.id==='d13'||q.id==='d11')q.note=n.note;}});
+        j.zikirs.forEach(function(q){var n=dm[q.id];if(n){q.name=n.name;q.sub=n.sub;if(q.id==='w1')q.arabic=n.arabic;if(q.id==='d1'||q.id==='w5'){q.hd=n.hd;q.note=n.note;}if(q.id==='d1'||q.id==='d22'||q.id==='d12'||q.id==='d13'||q.id==='d11')q.note=n.note;}});
         d.zikirs.forEach(function(q){if(q.id.charAt(0)==='w'&&!j.zikirs.some(function(x){return x.id===q.id;}))j.zikirs.push(q);}); // yeni haftalık zikirler sona eklenir
-        j.zl=11;
-      }else if(oldZl!==11){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
+        j.zl=12;
+      }else if(oldZl!==12){ // hazır liste güncellendi: eski hazır zikirleri yenisiyle değiştir, kendi eklediklerini koru
         var mine=j.zikirs.filter(function(q){return String(q.id).charAt(0)==='u';});
-        j.zikirs=d.zikirs.concat(mine);j.zl=11;j.active='d1';
+        j.zikirs=d.zikirs.concat(mine);j.zl=12;j.active='d1';
         j.counts={};mine.forEach(function(q){if(j.counts)j.counts[q.id]=0;});j.period={};
       }
       return j;
@@ -926,7 +926,7 @@ function pageCount(){
    '<button class="iconbtn" data-a="snd" style="background:var(--s3);'+(S.set.sound?'color:var(--accent-t)':'')+'" aria-label="Ses">'+ic(S.set.sound?'vol':'mute')+'</button></div></div>'+
    '<div class="card" style="padding:16px 14px;overflow:hidden">'+
      '<div class="row" style="align-items:flex-start"><div class="col"><span class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Zikir '+(idx+1)+' / '+S.zikirs.length+'</span>'+
-       '<h1 class="t-lg acc" style="margin-top:2px">'+esc(z.name)+'</h1></div>'+
+       '<h1 class="t-lg acc" style="margin-top:2px">'+esc(z.name)+'</h1>'+(z.hd?'<p style="font-size:14px;line-height:1.5;margin-top:5px;color:var(--on)">'+esc(z.hd)+'</p>':'')+'</div>'+
        '<span class="pill" style="background:color-mix(in srgb,var(--accent) 16%,transparent)">'+esc(targetsText(z))+' Hedef</span></div>'+
      '<div class="ringbox"><div class="halo"></div>'+
        '<div class="disc" id="disc"></div>'+
