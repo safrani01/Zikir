@@ -926,7 +926,7 @@ function pageCount(){
    '<button class="iconbtn" data-a="snd" style="background:var(--s3);'+(S.set.sound?'color:var(--accent-t)':'')+'" aria-label="Ses">'+ic(S.set.sound?'vol':'mute')+'</button></div></div>'+
    '<div class="card" style="padding:16px 14px;overflow:hidden">'+
      '<div class="row" style="align-items:flex-start"><div class="col"><span class="lab-s acc" style="text-transform:uppercase;letter-spacing:.12em">Zikir '+(idx+1)+' / '+S.zikirs.length+'</span>'+
-       '<h1 class="t-lg acc" style="margin-top:2px">'+esc(z.name)+'</h1>'+(z.hd?'<p style="font-size:14px;line-height:1.5;margin-top:5px;color:var(--on)">'+esc(z.hd)+'</p>':'')+'</div>'+
+       '<h1 class="t-lg acc" style="margin-top:2px'+(z.hd?';font-size:21px;line-height:1.35':'')+'">'+esc(z.hd||z.name)+'</h1></div>'+
        '<span class="pill" style="background:color-mix(in srgb,var(--accent) 16%,transparent)">'+esc(targetsText(z))+' Hedef</span></div>'+
      '<div class="ringbox"><div class="halo"></div>'+
        '<div class="disc" id="disc"></div>'+
