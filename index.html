@@ -486,6 +486,9 @@ var I18N={
 "Lütfen bir mesaj yazın":["Please write a message","Bitte schreiben Sie eine Nachricht"],
 "Bağlantı kopyalandı":["Link copied","Link kopiert"],
 "E-posta uygulamanız açılıyor":["Opening your email app","Ihre E-Mail-App wird geöffnet"],
+"Mesajınız gönderildi":["Your message was sent","Ihre Nachricht wurde gesendet"],
+"Gönderiliyor…":["Sending…","Wird gesendet…"],
+"✓ Mesajınız gönderildi. Teşekkür ederiz!":["✓ Your message was sent. Thank you!","✓ Ihre Nachricht wurde gesendet. Vielen Dank!"],
 "Mesajınız iletildi, teşekkür ederiz":["Your message was sent, thank you","Ihre Nachricht wurde gesendet, vielen Dank"],
 "Dijital Tesbihat Deneyimi":["A Digital Tasbih Experience","Ein digitales Tesbih-Erlebnis"],
 "“Kalpler ancak Allah’ı anmakla huzur bulur.” (Ra‘d, 28)":["“Surely in the remembrance of Allah do hearts find rest.” (Ar-Ra‘d, 28)","„Wahrlich, im Gedenken Allahs finden die Herzen Ruhe.“ (Ar-Ra‘d, 28)"],
@@ -630,13 +633,20 @@ function shareApp(){
   catch(e){toast(APP_URL);}
 }
 var contactBusy=false;
+function cStatus(txt,kind){
+  var e=$('#c-status'),b=$('[data-a=sendContact]');if(!e)return;
+  e.style.display=txt?'block':'none';e.textContent=txt?tr(txt):'';
+  e.style.background=kind==='ok'?'color-mix(in srgb,#34d399 20%,transparent)':'var(--s4)';
+  e.style.color=kind==='ok'?'#34d399':'var(--on)';
+  if(b){b.disabled=kind==='wait';b.style.opacity=kind==='wait'?'.6':'';}
+}
 function sendContact(){
   if(contactBusy)return;
   var nm=($('#c-name')||{}).value||'',ml=($('#c-mail')||{}).value||'',msg=(($('#c-msg')||{}).value||'').trim();
-  if(msg.length<3){toast('Lütfen bir mesaj yazın');return;}
-  contactBusy=true;
+  if(msg.length<3){toast('Lütfen bir mesaj yazın');cStatus('Lütfen bir mesaj yazın');return;}
+  contactBusy=true;cStatus('Gönderiliyor…','wait');
   var fallback=function(){
-    contactBusy=false;
+    contactBusy=false;cStatus('');
     location.href='mailto:'+CONTACT_MAIL+'?subject='+encodeURIComponent('Zikir Matik - Bize Ulaşın')+'&body='+encodeURIComponent(msg+(nm?'\n\n'+nm:'')+(ml?'\n'+ml:''));
     toast('E-posta uygulamanız açılıyor');
   };
@@ -645,7 +655,7 @@ function sendContact(){
     body:JSON.stringify({name:nm||'(isim yok)',email:ml||'noreply@example.com',message:msg,_subject:'Zikir Matik - Bize Ulaşın',_captcha:'false',_template:'table'})})
   .then(function(r){return r.json();})
   .then(function(j){clearTimeout(tm);
-    if(j&&(j.success===true||j.success==='true')){contactBusy=false;['c-msg','c-name','c-mail'].forEach(function(i){var e=$('#'+i);if(e)e.value='';});toast('Mesajınız iletildi, teşekkür ederiz');}
+    if(j&&(j.success===true||j.success==='true')){contactBusy=false;['c-msg','c-name','c-mail'].forEach(function(i){var e=$('#'+i);if(e)e.value='';});cStatus('✓ Mesajınız gönderildi. Teşekkür ederiz!','ok');toast('Mesajınız gönderildi');}
     else fallback();})
   .catch(function(){clearTimeout(tm);fallback();});
 }
@@ -1297,7 +1307,8 @@ function pageSettings(){
      '<div class="card flat fld"><input type="text" id="c-name" maxlength="60" placeholder="Adınız (isteğe bağlı)"></div>'+
      '<div class="card flat fld"><input type="email" id="c-mail" maxlength="80" placeholder="Cevap için e-posta (isteğe bağlı)"></div>'+
      '<div class="card flat fld"><textarea id="c-msg" rows="4" maxlength="1000" placeholder="Mesajınız…"></textarea></div>'+
-     '<button class="btn block" data-a="sendContact" style="border-radius:12px">'+ic('fwd')+' Gönder</button></div></div></div>'+
+     '<button class="btn block" data-a="sendContact" style="border-radius:12px">'+ic('fwd')+' Gönder</button>'+
+     '<div id="c-status" role="status" aria-live="polite" style="display:none;border-radius:12px;padding:12px 14px;font:600 14px/1.45 var(--body);text-align:center"></div></div></div></div>'+
    '<div class="sec"><h3>'+ic('info')+' Uygulama Hakkında</h3><div class="grp" style="align-items:center;text-align:center">'+
      '<div class="logo" style="width:64px;height:64px"><svg class="ic" style="width:32px;height:32px" viewBox="0 0 24 24"><use href="#i-tap"/></svg></div>'+
      '<div class="col"><b class="t-sm acc">Zikir Matik</b><span class="lab-s">Sürüm 2.0 (Huzur Sürümü)</span><span class="lab-s acc" style="margin-top:3px">Dijital Tesbihat Deneyimi</span></div>'+
