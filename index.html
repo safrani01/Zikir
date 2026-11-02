@@ -141,7 +141,7 @@ h1,h2,h3,p{margin:0}
 @keyframes rp{to{transform:scale(3.4);opacity:0}}
 /* form */
 .fld{display:flex;flex-direction:column;gap:7px}
-input[type=text],input[type=number],textarea{width:100%;font:400 15px/1.4 var(--body);color:var(--on);background:var(--s4);border:1px solid transparent;border-radius:12px;padding:12px 14px;outline:none}
+input[type=text],input[type=number],input[type=email],textarea{width:100%;font:400 15px/1.4 var(--body);color:var(--on);background:var(--s4);border:1px solid transparent;border-radius:12px;padding:12px 14px;outline:none}
 input:focus,textarea:focus{border-color:color-mix(in srgb,var(--accent) 60%,transparent)}
 input::placeholder,textarea::placeholder{color:var(--out)}
 textarea{resize:none}
@@ -474,6 +474,19 @@ var I18N={
 "Tüm İstatistikleri Sıfırla":["Reset All Statistics","Alle Statistiken zurücksetzen"],
 "Hazır Zikir Listesini Geri Yükle":["Restore Default Dhikr List","Standard-Zikirliste wiederherstellen"],
 "Uygulama Hakkında":["About the App","Über die App"],
+"Destek & Paylaşım":["Support & Sharing","Support & Teilen"],
+"Uygulamayı Paylaş":["Share the App","App teilen"],
+"Yakınlarınıza uygulamanın bağlantısını gönderin":["Send the app link to your loved ones","Senden Sie den App-Link an Ihre Lieben"],
+"Bize Ulaşın":["Contact Us","Kontakt"],
+"Öneri, istek veya karşılaştığınız bir sorunu yazın. Mesajınız doğrudan geliştiriciye iletilir; zikir verileriniz gönderilmez.":["Write a suggestion, request or a problem you ran into. Your message goes directly to the developer; your dhikr data is not sent.","Schreiben Sie einen Vorschlag, Wunsch oder ein Problem. Ihre Nachricht geht direkt an den Entwickler; Ihre Zikir-Daten werden nicht gesendet."],
+"Adınız (isteğe bağlı)":["Your name (optional)","Ihr Name (optional)"],
+"Cevap için e-posta (isteğe bağlı)":["Email for a reply (optional)","E-Mail für eine Antwort (optional)"],
+"Mesajınız…":["Your message…","Ihre Nachricht…"],
+"Gönder":["Send","Senden"],
+"Lütfen bir mesaj yazın":["Please write a message","Bitte schreiben Sie eine Nachricht"],
+"Bağlantı kopyalandı":["Link copied","Link kopiert"],
+"E-posta uygulamanız açılıyor":["Opening your email app","Ihre E-Mail-App wird geöffnet"],
+"Mesajınız iletildi, teşekkür ederiz":["Your message was sent, thank you","Ihre Nachricht wurde gesendet, vielen Dank"],
 "Dijital Tesbihat Deneyimi":["A Digital Tasbih Experience","Ein digitales Tesbih-Erlebnis"],
 "“Kalpler ancak Allah’ı anmakla huzur bulur.” (Ra‘d, 28)":["“Surely in the remembrance of Allah do hearts find rest.” (Ar-Ra‘d, 28)","„Wahrlich, im Gedenken Allahs finden die Herzen Ruhe.“ (Ar-Ra‘d, 28)"],
 "Sayaca Dön":["Back to Counter","Zurück zum Zähler"],
@@ -608,6 +621,33 @@ function backupDue(){
 function lastBackupText(){
   if(!S.lastBackup)return 'Hiç yedek alınmadı';
   return 'Son yedek: '+new Date(S.lastBackup).toLocaleDateString(LOC[lang()],{day:'numeric',month:'long',year:'numeric'});
+}
+var APP_URL='https://safrani01.github.io/Zikir/',CONTACT_MAIL='Safrani01@hotmail.com';
+function shareApp(){
+  var txt='Zikir Matik: günlük zikirlerinizi sayabileceğiniz, ücretsiz ve reklamsız bir uygulama.';
+  if(navigator.share){navigator.share({title:'Zikir Matik',text:txt,url:APP_URL}).catch(function(){});return;}
+  try{navigator.clipboard.writeText(txt+' '+APP_URL).then(function(){toast('Bağlantı kopyalandı');},function(){toast(APP_URL);});}
+  catch(e){toast(APP_URL);}
+}
+var contactBusy=false;
+function sendContact(){
+  if(contactBusy)return;
+  var nm=($('#c-name')||{}).value||'',ml=($('#c-mail')||{}).value||'',msg=(($('#c-msg')||{}).value||'').trim();
+  if(msg.length<3){toast('Lütfen bir mesaj yazın');return;}
+  contactBusy=true;
+  var fallback=function(){
+    contactBusy=false;
+    location.href='mailto:'+CONTACT_MAIL+'?subject='+encodeURIComponent('Zikir Matik - Bize Ulaşın')+'&body='+encodeURIComponent(msg+(nm?'\n\n'+nm:'')+(ml?'\n'+ml:''));
+    toast('E-posta uygulamanız açılıyor');
+  };
+  var ctl=window.AbortController?new AbortController():null,tm=setTimeout(function(){if(ctl)ctl.abort();},12000);
+  fetch('https://formsubmit.co/ajax/'+CONTACT_MAIL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},signal:ctl?ctl.signal:undefined,
+    body:JSON.stringify({name:nm||'(isim yok)',email:ml||'noreply@example.com',message:msg,_subject:'Zikir Matik - Bize Ulaşın',_captcha:'false',_template:'table'})})
+  .then(function(r){return r.json();})
+  .then(function(j){clearTimeout(tm);
+    if(j&&(j.success===true||j.success==='true')){contactBusy=false;['c-msg','c-name','c-mail'].forEach(function(i){var e=$('#'+i);if(e)e.value='';});toast('Mesajınız iletildi, teşekkür ederiz');}
+    else fallback();})
+  .catch(function(){clearTimeout(tm);fallback();});
 }
 function shareBackup(){
   try{
@@ -1250,6 +1290,14 @@ function pageSettings(){
      '<span class="lab-s">'+lastBackupText()+'</span></div>'+
      '<button class="btn block danger" data-a="wipe" style="padding:13px;font-size:13px">'+ic('trash')+' Tüm İstatistikleri Sıfırla</button>'+
      '<button class="btn block ghost" data-a="defaults" style="padding:13px;font-size:13px">'+ic('reset')+' Hazır Zikir Listesini Geri Yükle</button></div></div>'+
+   '<div class="sec"><h3>'+ic('star')+' Destek & Paylaşım</h3><div class="grp">'+
+     '<div class="col" style="gap:8px"><div class="col"><span class="lab">Uygulamayı Paylaş</span><span class="lab-s">Yakınlarınıza uygulamanın bağlantısını gönderin</span></div>'+
+     '<button class="btn soft block" data-a="shareApp" style="border-radius:12px">'+ic('up')+' Uygulamayı Paylaş</button></div><div class="sep"></div>'+
+     '<div class="col" style="gap:8px"><div class="col"><span class="lab">Bize Ulaşın</span><span class="lab-s">Öneri, istek veya karşılaştığınız bir sorunu yazın. Mesajınız doğrudan geliştiriciye iletilir; zikir verileriniz gönderilmez.</span></div>'+
+     '<div class="card flat fld"><input type="text" id="c-name" maxlength="60" placeholder="Adınız (isteğe bağlı)"></div>'+
+     '<div class="card flat fld"><input type="email" id="c-mail" maxlength="80" placeholder="Cevap için e-posta (isteğe bağlı)"></div>'+
+     '<div class="card flat fld"><textarea id="c-msg" rows="4" maxlength="1000" placeholder="Mesajınız…"></textarea></div>'+
+     '<button class="btn block" data-a="sendContact" style="border-radius:12px">'+ic('fwd')+' Gönder</button></div></div></div>'+
    '<div class="sec"><h3>'+ic('info')+' Uygulama Hakkında</h3><div class="grp" style="align-items:center;text-align:center">'+
      '<div class="logo" style="width:64px;height:64px"><svg class="ic" style="width:32px;height:32px" viewBox="0 0 24 24"><use href="#i-tap"/></svg></div>'+
      '<div class="col"><b class="t-sm acc">Zikir Matik</b><span class="lab-s">Sürüm 2.0 (Huzur Sürümü)</span><span class="lab-s acc" style="margin-top:3px">Dijital Tesbihat Deneyimi</span></div>'+
@@ -1476,6 +1524,8 @@ function act(a,id,e,el){
       catch(err){toast('Yedek alınamadı.');}
       break;}
     case 'shareBackup':shareBackup();break;
+    case 'shareApp':shareApp();break;
+    case 'sendContact':sendContact();break;
     case 'snoozeBackup':S.backupSnooze=Date.now()+3*86400000;save();renderAll();break;
     case 'import':$('#fileImport').click();break;
     case 'wipe':
